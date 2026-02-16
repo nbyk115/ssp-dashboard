@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本 ads.txt SSP プレゼンス分析</title>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<style>body{margin:0;background:#fff;}</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useMemo } = React;
+
+const TH = 1000;
+const TS = 130;
+const fmt = (n) => n.toLocaleString();
+
+const SITES = [
+  { rank: 461, domain: "yahoo.co.jp" },{ rank: 507, domain: "amazon.co.jp" },{ rank: 541, domain: "rakuten.co.jp" },
+  { rank: 787, domain: "ameblo.jp" },{ rank: 988, domain: "google.co.jp" },{ rank: 1050, domain: "ameba.jp" },
+  { rank: 1106, domain: "docomo.ne.jp" },{ rank: 1171, domain: "dmm.co.jp" },{ rank: 1179, domain: "itmedia.co.jp" },
+  { rank: 1185, domain: "tbs.co.jp" },{ rank: 1236, domain: "hotpepper.jp" },{ rank: 1347, domain: "tenki.jp" },
+  { rank: 1351, domain: "mbga.jp" },{ rank: 1360, domain: "suumo.jp" },{ rank: 1361, domain: "weathernews.jp" },
+  { rank: 1373, domain: "game8.jp" },{ rank: 1379, domain: "navitime.co.jp" },{ rank: 1390, domain: "zozo.jp" },
+  { rank: 1421, domain: "gamewith.jp" },{ rank: 1445, domain: "cmoa.jp" },{ rank: 1525, domain: "rakuten-sec.co.jp" },
+  { rank: 1527, domain: "kakuyomu.jp" },{ rank: 1538, domain: "mechacomic.jp" },{ rank: 1541, domain: "trilltrill.jp" },
+  { rank: 1634, domain: "jra.go.jp" },{ rank: 1638, domain: "site777.jp" },{ rank: 1648, domain: "jra.jp" },
+  { rank: 1650, domain: "ecnavi.jp" },{ rank: 1656, domain: "dto.jp" },{ rank: 1966, domain: "fantia.jp" },
+  { rank: 2401, domain: "hatena.ne.jp" },{ rank: 2494, domain: "sakura.ne.jp" },{ rank: 2703, domain: "nhk.or.jp" },
+  { rank: 2862, domain: "yimg.jp" },{ rank: 2958, domain: "adingo.jp" },{ rank: 3215, domain: "nicovideo.jp" },
+  { rank: 3227, domain: "infoseek.co.jp" },{ rank: 3237, domain: "dnsv.jp" },{ rank: 3371, domain: "cpi.ad.jp" },
+  { rank: 3548, domain: "xserver.jp" },{ rank: 3632, domain: "dns.jp" },{ rank: 3856, domain: "prtimes.jp" },
+  { rank: 3863, domain: "mynavi.jp" },{ rank: 3869, domain: "granbluefantasy.jp" },{ rank: 3952, domain: "yomiuri.co.jp" },
+  { rank: 4016, domain: "japanpost.jp" },{ rank: 4077, domain: "livedoor.jp" },{ rank: 4110, domain: "japantimes.co.jp" },
+  { rank: 4123, domain: "mainichi.jp" },{ rank: 4320, domain: "d-53.jp" },{ rank: 4321, domain: "mhlw.go.jp" },
+  { rank: 4549, domain: "biglobe.ne.jp" },{ rank: 4631, domain: "naver.jp" },{ rank: 4666, domain: "u-tokyo.ac.jp" },
+  { rank: 4851, domain: "dion.ne.jp" },{ rank: 4899, domain: "jst.go.jp" },{ rank: 4917, domain: "disney.co.jp" },
+  { rank: 4929, domain: "ntv.co.jp" },{ rank: 4932, domain: "jal.co.jp" },{ rank: 4939, domain: "softbank.jp" },
+  { rank: 5058, domain: "recruit.co.jp" },{ rank: 5257, domain: "jma.go.jp" },{ rank: 5451, domain: "tv-asahi.co.jp" },
+  { rank: 5484, domain: "excite.co.jp" },{ rank: 5736, domain: "gnavi.co.jp" },{ rank: 6003, domain: "exblog.jp" },
+  { rank: 6006, domain: "plala.or.jp" },{ rank: 6007, domain: "buyee.jp" },{ rank: 6064, domain: "nhk.jp" },
+  { rank: 6065, domain: "kuronekoyamato.co.jp" },{ rank: 6251, domain: "auone.jp" },{ rank: 6293, domain: "dns.ne.jp" },
+  { rank: 6359, domain: "mixi.jp" },{ rank: 6400, domain: "impress.co.jp" },{ rank: 6430, domain: "oricon.co.jp" },
+  { rank: 6447, domain: "goo.ne.jp" },{ rank: 6654, domain: "diamond.jp" },{ rank: 6701, domain: "ana.co.jp" },
+  { rank: 6740, domain: "meti.go.jp" },{ rank: 6859, domain: "mlit.go.jp" },{ rank: 6863, domain: "suruga-ya.jp" },
+  { rank: 6887, domain: "chunichi.co.jp" },{ rank: 6915, domain: "beforward.jp" },{ rank: 6930, domain: "sponichi.co.jp" },
+  { rank: 7172, domain: "main.jp" },{ rank: 7178, domain: "tver.jp" },{ rank: 7204, domain: "jorudan.co.jp" },
+  { rank: 7212, domain: "mizuhobank.co.jp" },{ rank: 7268, domain: "sbisec.co.jp" },{ rank: 7272, domain: "fnn.jp" },
+  { rank: 7279, domain: "homes.co.jp" },{ rank: 7288, domain: "toyota.jp" },{ rank: 7374, domain: "ismedia.jp" },
+  { rank: 7379, domain: "carview.co.jp" },{ rank: 7450, domain: "arpanet.jp" },{ rank: 7502, domain: "athome.co.jp" },
+  { rank: 7544, domain: "takashimaya.co.jp" },{ rank: 7675, domain: "president.jp" },{ rank: 7702, domain: "so-net.ne.jp" },
+  { rank: 7749, domain: "mcdonalds.co.jp" },{ rank: 7778, domain: "freee.co.jp" },{ rank: 7878, domain: "huffingtonpost.jp" },
+  { rank: 7905, domain: "kyoto-np.co.jp" },{ rank: 7912, domain: "wikiwiki.jp" },{ rank: 7933, domain: "tokubai.co.jp" },
+  { rank: 7964, domain: "mofa.go.jp" },{ rank: 7987, domain: "smbcnikko.co.jp" },{ rank: 8023, domain: "daily.co.jp" },
+  { rank: 8070, domain: "ocn.ne.jp" },{ rank: 8105, domain: "booklive.jp" },{ rank: 8139, domain: "palcloset.jp" },
+  { rank: 8144, domain: "p-bandai.jp" },{ rank: 8159, domain: "geocities.jp" },{ rank: 8171, domain: "minkabu.jp" },
+  { rank: 8201, domain: "furusato-tax.jp" },{ rank: 8219, domain: "kabutan.jp" },{ rank: 8288, domain: "nitori-net.jp" },
+  { rank: 8378, domain: "world.co.jp" },{ rank: 8463, domain: "melonbooks.co.jp" },{ rank: 8478, domain: "mamastar.jp" },
+  { rank: 8487, domain: "tokyo.lg.jp" },{ rank: 8503, domain: "skylark.co.jp" },{ rank: 8587, domain: "tokyo-sports.co.jp" },
+  { rank: 8621, domain: "nomura.co.jp" },{ rank: 8650, domain: "felissimo.co.jp" },{ rank: 8657, domain: "kyoto-u.ac.jp" },
+  { rank: 8816, domain: "kuruma-news.jp" },{ rank: 8825, domain: "shop-pro.jp" },{ rank: 8836, domain: "tkc.co.jp" },
+  { rank: 8864, domain: "papy.co.jp" },
+];
+
+const DATA = [
+  { n: "pubmatic.com", d: 1585, r: 16814, t: 18399, s: 117, b: "PubMatic", c: "", o: "US" },
+  { n: "rubiconproject.com", d: 1254, r: 11227, t: 12481, s: 118, b: "Magnite", c: "旧Rubicon Project", o: "US" },
+  { n: "openx.com", d: 650, r: 8484, t: 9134, s: 117, b: "OpenX", c: "", o: "US" },
+  { n: "indexexchange.com", d: 699, r: 6126, t: 6825, s: 115, b: "Index Exchange", c: "", o: "CA" },
+  { n: "smartadserver.com", d: 822, r: 5105, t: 5927, s: 115, b: "Equativ", c: "旧SmartAdServer", o: "FR" },
+  { n: "video.unrulymedia.com", d: 619, r: 3337, t: 3956, s: 113, b: "Nexxen", c: "旧Unruly", o: "UK" },
+  { n: "criteo.com", d: 810, r: 778, t: 1588, s: 110, b: "Criteo", c: "Commerce Grid", o: "FR" },
+  { n: "inmobi.com", d: 252, r: 1336, t: 1588, s: 104, b: "InMobi", c: "モバイルSSP", o: "IN" },
+  { n: "media.net", d: 548, r: 945, t: 1493, s: 109, b: "Media.net", c: "", o: "AE" },
+  { n: "gumgum.com", d: 203, r: 792, t: 995, s: 111, b: "GumGum", c: "コンテキスト広告", o: "US" },
+  { n: "outbrain.com", d: 280, r: 570, t: 850, s: 98, b: "Outbrain", c: "レコメンド型", o: "US" },
+  { n: "teads.tv", d: 336, r: 254, t: 590, s: 110, b: "Teads", c: "インリード動画", o: "FR" },
+  { n: "taboola.com", d: 287, r: 62, t: 349, s: 70, b: "Taboola", c: "レコメンド型", o: "US" },
+  { n: "ogury.com", d: 86, r: 194, t: 280, s: 102, b: "Ogury", c: "モバイル特化", o: "FR" },
+  { n: "impact-ad.jp", d: 440, r: 1637, t: 2077, s: 117, b: "YieldOne", c: "P1（DAC系列）", o: "JP" },
+  { n: "adingo.jp", d: 699, r: 993, t: 1692, s: 118, b: "fluct", c: "CARTA HD（旧adingo）", o: "JP" },
+  { n: "i-mobile.co.jp", d: 59, r: 1399, t: 1458, s: 106, b: "i-mobile", c: "", o: "JP" },
+  { n: "ad-stir.com", d: 61, r: 1052, t: 1113, s: 107, b: "adstir", c: "ユナイテッド", o: "JP" },
+  { n: "ad-generation.jp", d: 230, r: 866, t: 1096, s: 115, b: "Ad Generation", c: "Supership / KDDI系", o: "JP" },
+  { n: "genieesspv.jp", d: 232, r: 353, t: 585, s: 98, b: "Geniee SSP", c: "", o: "JP" },
+  { n: "microad.co.jp", d: 220, r: 246, t: 466, s: 107, b: "MicroAd COMPASS", c: "", o: "JP" },
+  { n: "aja.vision", d: 44, r: 323, t: 367, s: 100, b: "AJA SSP", c: "サイバーエージェント", o: "JP" },
+  { n: "fout.jp", d: 174, r: 0, t: 174, s: 12, b: "FreakOut", c: "DSP主力", o: "JP" },
+];
+
+const MAX_T = Math.max(...DATA.filter((x) => x.t >= TH).map((x) => x.t));
+
+function calcSpo(s) {
+  if (s.t < TH) return null;
+  var dr = (s.d / s.t) * 100;
+  var cv = (s.s / TS) * 100;
+  var vl = (Math.log(s.t) / Math.log(MAX_T)) * 100;
+  return cv * 0.3 + dr * 0.35 + vl * (dr / 100) * 0.35;
+}
+
+function isCut(s) {
+  return s.t < TH;
+}
+
+function getOriginBg(o) {
+  var map = { JP: "#fff1f2", US: "#eef2ff", FR: "#f0fdf4", UK: "#fefce8", CA: "#faf5ff", IN: "#fff7ed", AE: "#f0f9ff" };
+  return map[o] || "#f7f7f7";
+}
+function getOriginColor(o) {
+  var map = { JP: "#e11d48", US: "#4f46e5", FR: "#16a34a", UK: "#ca8a04", CA: "#9333ea", IN: "#ea580c", AE: "#0284c7" };
+  return map[o] || "#999";
+}
+
+function Pill({ on, children, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        padding: "5px 12px",
+        border: on ? "1px solid #1a1a1a" : "1px solid #ddd",
+        borderRadius: 20,
+        fontSize: 11,
+        cursor: "pointer",
+        background: on ? "#1a1a1a" : "#fff",
+        color: on ? "#fff" : "#999",
+        whiteSpace: "nowrap",
+        marginRight: 4,
+        marginBottom: 4,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function ScoreRow({ rank, item, color, maxScore, minScore }) {
+  var sc = calcSpo(item);
+  if (sc === null) return null;
+  var dp = ((item.d / item.t) * 100).toFixed(0);
+  var range = maxScore - minScore;
+  var barPct = range > 0 ? ((sc - minScore) / range) * 85 + 15 : 100;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "3px 0", fontSize: 12 }}>
+      <span style={{ fontFamily: "'SF Mono', Consolas, Monaco, monospace", fontWeight: 700, fontSize: 14, width: 22, textAlign: "right" }}>
+        {rank}
+      </span>
+      <span style={{ fontWeight: 600, minWidth: 120 }}>
+        {item.o === "JP" ? "🇯🇵 " : ""}
+        {item.b}
+      </span>
+      <div style={{ flex: 1, maxWidth: 140, height: 7, background: "rgba(0,0,0,.06)", borderRadius: 4, overflow: "hidden" }}>
+        <div style={{ width: barPct + "%", height: "100%", background: color, borderRadius: 4 }} />
+      </div>
+      <span style={{ fontFamily: "'SF Mono', Consolas, Monaco, monospace", fontWeight: 600, fontSize: 11, width: 36, textAlign: "right" }}>
+        {sc.toFixed(1)}
+      </span>
+      <span style={{ fontSize: 9, opacity: 0.5, fontFamily: "'SF Mono', Consolas, Monaco, monospace" }}>
+        D{dp}% {fmt(item.t)}パス
+      </span>
+    </div>
+  );
+}
+
+function BarChart({ data, dmax, grpOpen, grpData }) {
+  return (
+    <div>
+      {grpOpen && grpData && (
+        <div style={{ border: "1px solid #fde68a", borderRadius: 7, padding: "8px 12px", marginBottom: 10 }}>
+          <div style={{ fontWeight: 700, fontSize: 12, marginBottom: 4 }}>国産SSP グループ関係</div>
+          {grpData.groups.map(function (g) {
+            return (
+              <div key={g.name} style={{ fontSize: 10, color: "#888", lineHeight: 1.6 }}>
+                <b style={{ color: "#555" }}>{g.name}</b>：{g.members.join("、")}
+              </div>
+            );
+          })}
+          <div style={{ fontSize: 9, color: "#bbb", marginTop: 4 }}>
+            ※ ads.txtドメイン単位の集計のため、同一グループでもドメインが異なれば別カウント
+          </div>
+        </div>
+      )}
+      <div style={{ display: "flex", gap: 12, marginBottom: 6, fontSize: 10, color: "#aaa" }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
+          <span style={{ width: 9, height: 9, borderRadius: 2, background: "#3b82f6", display: "inline-block" }} />
+          DIRECT
+        </span>
+        <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
+          <span style={{ width: 9, height: 9, borderRadius: 2, background: "#f97316", display: "inline-block" }} />
+          RESELLER
+        </span>
+      </div>
+      {data.map(function (s) {
+        var dp = (s.d / s.t) * 100;
+        var w = dmax > 1 ? (Math.log(s.t + 1) / Math.log(dmax + 1)) * 100 : 2;
+        var ct = isCut(s);
+        return (
+          <div
+            key={s.n}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "140px 1fr 52px 70px",
+              gap: 5,
+              alignItems: "center",
+              padding: "3px 0",
+              borderBottom: "1px solid #f5f5f5",
+              opacity: ct ? 0.45 : 1,
+            }}
+          >
+            <div style={{ fontSize: 11, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <span style={{ color: s.o === "JP" ? "#e11d48" : "#333" }}>{s.b}</span>
+              <span style={{ display: "block", fontSize: 8, color: "#ccc", fontFamily: "'SF Mono', Consolas, Monaco, monospace" }}>{s.n}</span>
+            </div>
+            <div style={{ position: "relative", height: 16 }}>
+              <div
+                style={{
+                  display: "flex",
+                  height: "100%",
+                  borderRadius: 3,
+                  overflow: "hidden",
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                  width: Math.max(w, 2) + "%",
+                }}
+              >
+                <div style={{ width: dp + "%", height: "100%", background: "#3b82f6" }} />
+                <div style={{ width: 100 - dp + "%", height: "100%", background: "#f97316" }} />
+              </div>
+            </div>
+            <div style={{ fontSize: 11, fontFamily: "'SF Mono', Consolas, Monaco, monospace", color: ct ? "#ccc" : "#555", textAlign: "right", fontWeight: 600 }}>
+              {fmt(s.t)}
+            </div>
+            <div style={{ fontSize: 10, fontFamily: "'SF Mono', Consolas, Monaco, monospace", display: "flex", gap: 1, justifyContent: "flex-end" }}>
+              <span style={{ color: "#3b82f6", fontWeight: 600 }}>{dp.toFixed(0)}%</span>
+              <span style={{ color: "#ddd" }}>/</span>
+              <span style={{ color: "#f97316", fontWeight: 600 }}>{(100 - dp).toFixed(0)}%</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function DataTable({ data, sortKey, sortDir, onSort }) {
+  return (
+    <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+        <thead>
+          <tr style={{ borderBottom: "2px solid #e5e5e5" }}>
+            <th style={{ textAlign: "center", padding: "4px 5px", fontSize: 9, color: "#aaa", width: 30 }}>#</th>
+            <th style={{ textAlign: "left", padding: "4px 5px", fontSize: 9, color: "#aaa" }}>SSP</th>
+            {[
+              ["d", "Direct"],
+              ["r", "Resell"],
+              ["t", "パス数"],
+              ["dpct", "D率"],
+              ["spo", "SPO"],
+              ["s", "掲載"],
+            ].map(function (pair) {
+              var k = pair[0];
+              var l = pair[1];
+              var arrow = sortKey === k ? (sortDir === -1 ? " ↓" : " ↑") : "";
+              return (
+                <th
+                  key={k}
+                  onClick={function () { onSort(k); }}
+                  style={{
+                    textAlign: "right",
+                    padding: "4px 5px",
+                    fontSize: 9,
+                    color: sortKey === k ? "#1a1a1a" : "#aaa",
+                    cursor: "pointer",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {l}{arrow}
+                </th>
+              );
+            })}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map(function (s, i) {
+            var dp = (s.d / s.t) * 100;
+            var sc = calcSpo(s);
+            var ct = isCut(s);
+            var spoColor = sc === null ? "#ddd" : sc >= 50 ? "#16a34a" : sc >= 35 ? "#555" : "#aaa";
+            return (
+              <tr key={s.n} style={{ borderBottom: "1px solid #f5f5f5", opacity: ct ? 0.45 : 1 }}>
+                <td style={{ textAlign: "center", padding: "3px 5px", color: "#ccc", fontFamily: "'SF Mono', Consolas, Monaco, monospace", fontSize: 9 }}>
+                  {i + 1}
+                </td>
+                <td style={{ padding: "3px 5px", fontWeight: 600, whiteSpace: "nowrap", fontSize: 11 }}>
+                  {s.b}
+                  <span
+                    style={{
+                      fontSize: 8,
+                      padding: "0 3px",
+                      borderRadius: 3,
+                      marginLeft: 3,
+                      background: getOriginBg(s.o),
+                      color: getOriginColor(s.o),
+                    }}
+                  >
+                    {s.o}
+                  </span>
+                  {ct && (
+                    <span style={{ fontSize: 8, color: "#999", background: "#f5f5f5", padding: "0 3px", borderRadius: 3, marginLeft: 2 }}>
+                      {"<1K"}
+                    </span>
+                  )}
+                </td>
+                <td style={{ textAlign: "right", padding: "3px 5px", fontFamily: "'SF Mono', Consolas, Monaco, monospace", color: "#3b82f6", fontSize: 10 }}>
+                  {fmt(s.d)}
+                </td>
+                <td style={{ textAlign: "right", padding: "3px 5px", fontFamily: "'SF Mono', Consolas, Monaco, monospace", color: "#f97316", fontSize: 10 }}>
+                  {fmt(s.r)}
+                </td>
+                <td style={{ textAlign: "right", padding: "3px 5px", fontFamily: "'SF Mono', Consolas, Monaco, monospace", fontWeight: 600, fontSize: 10 }}>
+                  {fmt(s.t)}
+                </td>
+                <td
+                  style={{
+                    textAlign: "right",
+                    padding: "3px 5px",
+                    fontFamily: "'SF Mono', Consolas, Monaco, monospace",
+                    color: dp > 30 ? "#16a34a" : dp > 15 ? "#555" : "#aaa",
+                    fontSize: 10,
+                  }}
+                >
+                  {dp.toFixed(0)}%
+                </td>
+                <td style={{ textAlign: "right", padding: "3px 5px", fontFamily: "'SF Mono', Consolas, Monaco, monospace", fontWeight: 600, color: spoColor, fontSize: 10 }}>
+                  {sc === null ? "—" : sc.toFixed(1)}
+                </td>
+                <td style={{ textAlign: "right", padding: "3px 5px", fontFamily: "'SF Mono', Consolas, Monaco, monospace", fontSize: 10 }}>{s.s}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function App() {
+  var _a = useState("score"), tab = _a[0], setTab = _a[1];
+  var _b = useState("all"), fl = _b[0], setFl = _b[1];
+  var _c = useState(""), q = _c[0], setQ = _c[1];
+  var _d = useState(false), grpOpen = _d[0], setGrpOpen = _d[1];
+  var _f = useState("t"), sK = _f[0], setSK = _f[1];
+  var _g = useState(-1), sD = _g[0], setSD = _g[1];
+
+  function doSort(k) {
+    if (sK === k) { setSD(function (d) { return d * -1; }); }
+    else { setSK(k); setSD(-1); }
+  }
+
+  var filtered = useMemo(function () {
+    var d;
+    if (q) {
+      var ql = q.toLowerCase();
+      d = DATA.filter(function (s) {
+        return s.n.toLowerCase().indexOf(ql) >= 0 || s.b.toLowerCase().indexOf(ql) >= 0 || (s.c && s.c.toLowerCase().indexOf(ql) >= 0);
+      });
+    } else if (fl === "jp") {
+      d = DATA.filter(function (x) { return x.o === "JP"; });
+    } else if (fl === "gl") {
+      d = DATA.filter(function (x) { return x.o !== "JP"; });
+    } else {
+      d = DATA.slice();
+    }
+    return d.sort(function (a, b) {
+      if (sK === "spo") return sD * ((calcSpo(b) || 0) - (calcSpo(a) || 0));
+      if (sK === "dpct") return sD * ((b.d / b.t) - (a.d / a.t));
+      return sD * ((b[sK] || 0) - (a[sK] || 0));
+    });
+  }, [fl, q, sK, sD]);
+
+  var qual = useMemo(function () {
+    return DATA.filter(function (x) { return x.t >= TH; })
+      .map(function (s) { return Object.assign({}, s, { sc: calcSpo(s) }); })
+      .sort(function (a, b) { return b.sc - a.sc; });
+  }, []);
+
+  var jpQual = useMemo(function () {
+    return qual.filter(function (x) { return x.o === "JP"; });
+  }, [qual]);
+
+  var cutList = DATA.filter(isCut);
+  var dmax = Math.max.apply(null, filtered.map(function (x) { return x.t; }).concat([1]));
+  var maxScore = qual.length > 0 ? qual[0].sc : 1;
+  var minScore = qual.length > 0 ? qual[qual.length - 1].sc : 0;
+  var jpMinScore = jpQual.length > 0 ? jpQual[jpQual.length - 1].sc : 0;
+
+  var grpData = useMemo(function () {
+    return {
+      groups: [
+        { name: "博報堂DYグループ", members: ["YieldOne (impact-ad.jp)"] },
+        { name: "CARTA HD", members: ["fluct (adingo.jp)"] },
+        { name: "ユナイテッド", members: ["adstir (ad-stir.com)"] },
+      ]
+    };
+  }, []);
+
+  var tabs = [
+    ["score", "🏆 スコア"],
+    ["bar", "📊 パス数"],
+    ["table", "📋 テーブル"],
+  ];
+
+  return (
+    <div style={{ maxWidth: 960, margin: "0 auto", padding: "20px 14px 40px", fontFamily: "'Inter', 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Meiryo', system-ui, sans-serif", color: "#1a1a1a", lineHeight: 1.6, fontSize: 13 }}>
+      {/* Header */}
+      <div style={{ borderBottom: "2px solid #1a1a1a", paddingBottom: 8, marginBottom: 16 }}>
+        <h1 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>日本 ads.txt SSP プレゼンス分析</h1>
+        <p style={{ fontSize: 11, color: "#777", margin: "2px 0 0" }}>
+          Tranco .jp 上位130サイト × 主要23社 — リセラーペナルティ付きSPOスコア
+        </p>
+        <div style={{ display: "flex", gap: 6, marginTop: 6, flexWrap: "wrap" }}>
+          <span style={{ background: "#f7f7f7", padding: "1px 7px", borderRadius: 4, fontSize: 9, color: "#aaa" }}>Google AdX・Amazon APS除く</span>
+          <span style={{ background: "#f7f7f7", padding: "1px 7px", borderRadius: 4, fontSize: 9, color: "#aaa" }}>2026-02-15 クロール</span>
+        </div>
+      </div>
+
+      {/* Data source */}
+      <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 8, padding: "10px 12px", marginBottom: 12, fontSize: 11, lineHeight: 1.6, color: "#92400e" }}>
+        <b>対象サイトについて：</b>サイトの人気度ランキング「Tranco List」の.jp上位130サイトを使用。
+        Trancoは2018年にAlexa（Amazon提供、2022年終了）に代わり大学研究者が公開した学術向けランキングで、複数データソースの統合によりランキング操作に強いのが特徴。
+        ただし業界公式のメディアリストではなく、ISPやインフラ系ドメインも含まれる点に注意。
+        Google AdXは82,148パス/全130サイトで桁違いのため別集計。Amazon APSはAmazon DSP優位の構造のため除外。
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: "flex", flexWrap: "wrap", marginBottom: 14 }}>
+        {tabs.map(function (pair) {
+          return <Pill key={pair[0]} on={tab === pair[0]} onClick={function () { setTab(pair[0]); }}>{pair[1]}</Pill>;
+        })}
+      </div>
+
+      {/* Score Tab */}
+      {tab === "score" && (
+        <div>
+          <div style={{ background: "#f0f7ff", border: "1px solid #bfdbfe", borderRadius: 8, padding: "12px 14px", marginBottom: 14, color: "#1e40af", fontSize: 11, lineHeight: 1.7 }}>
+            <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>🏆 SPOスコア TOP5</div>
+            <div style={{ fontSize: 10, marginBottom: 6, color: "#3b82a0" }}>
+              1,000パス以上の{qual.length}社対象
+            </div>
+            {qual.slice(0, 5).map(function (s, i) {
+              return <ScoreRow key={s.n} rank={i + 1} item={s} color={s.o === "JP" ? "#e11d48" : "#2563eb"} maxScore={maxScore} minScore={minScore} />;
+            })}
+            <div style={{ fontSize: 9, opacity: 0.55, marginTop: 8, lineHeight: 1.7 }}>
+              <b>算出:</b> カバレッジ×30% + DIRECT率×35% + (スケール×DIRECT率)×35%<br />
+              <b>ペナルティの理由:</b> RESELLERパスは他SSPからも買える在庫 → 「そのSSPを通す固有の理由」にならない。
+              DIRECTパスは当該SSP経由でしか届かない経路。ボリュームがあっても大半がリセラーなら代替可能。<br />
+              <b>足切り:</b> 1,000パス未満（{cutList.length}社）/ ※マージン率やCPMは含まない
+            </div>
+          </div>
+          <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 8, padding: "12px 14px", color: "#166534", fontSize: 11, lineHeight: 1.7 }}>
+            <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>🇯🇵 国産SSP（{jpQual.length}社）</div>
+            {jpQual.slice(0, 5).map(function (s, i) {
+              return <ScoreRow key={s.n} rank={i + 1} item={s} color="#16a34a" maxScore={jpQual[0] ? jpQual[0].sc : 1} minScore={jpMinScore} />;
+            })}
+            <div style={{ fontSize: 9, opacity: 0.55, marginTop: 4 }}>
+              fluct(adingo.jp)はD率41%×カバレッジ91%で国産1位（全体2位）
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bar Tab */}
+      {tab === "bar" && (
+        <div>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", marginBottom: 10 }}>
+            <input
+              placeholder="検索"
+              value={q}
+              onChange={function (e) { setQ(e.target.value); }}
+              style={{ padding: "5px 12px", border: "1px solid #ddd", borderRadius: 20, fontSize: 11, outline: "none", width: 140, marginRight: 6 }}
+            />
+            <Pill on={fl === "all" && !q} onClick={function () { setFl("all"); setQ(""); }}>全{DATA.length}社</Pill>
+            <Pill on={fl === "jp" && !q} onClick={function () { setFl("jp"); setQ(""); }}>国産</Pill>
+            <Pill on={fl === "gl" && !q} onClick={function () { setFl("gl"); setQ(""); }}>海外</Pill>
+            <Pill on={grpOpen} onClick={function () { setGrpOpen(!grpOpen); }}>グループ関係</Pill>
+          </div>
+          <BarChart data={filtered} dmax={dmax} grpOpen={grpOpen} grpData={grpData} />
+        </div>
+      )}
+
+      {/* Table Tab */}
+      {tab === "table" && (
+        <div>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", marginBottom: 10 }}>
+            <input
+              placeholder="検索"
+              value={q}
+              onChange={function (e) { setQ(e.target.value); }}
+              style={{ padding: "5px 12px", border: "1px solid #ddd", borderRadius: 20, fontSize: 11, outline: "none", width: 140, marginRight: 6 }}
+            />
+            <Pill on={fl === "all" && !q} onClick={function () { setFl("all"); setQ(""); }}>全社</Pill>
+            <Pill on={fl === "jp" && !q} onClick={function () { setFl("jp"); setQ(""); }}>国産</Pill>
+            <Pill on={fl === "gl" && !q} onClick={function () { setFl("gl"); setQ(""); }}>海外</Pill>
+          </div>
+          <DataTable data={filtered} sortKey={sK} sortDir={sD} onSort={doSort} />
+        </div>
+      )}
+
+      {/* Note */}
+      <div style={{ background: "#fafafa", borderLeft: "3px solid #ddd", padding: "7px 10px", marginTop: 14, fontSize: 10, color: "#777", lineHeight: 1.5 }}>
+        <b style={{ color: "#555" }}>「パス数」= </b>
+        ads.txtの各行（広告販売許可宣言）の本数。枠在庫数ではなく経路の本数。
+      </div>
+
+      {/* Footer */}
+      <div style={{ fontSize: 8, color: "#ccc", marginTop: 16, lineHeight: 1.7, borderTop: "1px solid #f0f0f0", paddingTop: 8 }}>
+        SPO = Cov(30%)+D率(35%)+(Scale×D率)(35%)。RESELLERは他SSPでも到達可能 → スケール寄与圧縮。マージン率/CPM含まず。
+        足切り: GumGum Outbrain Teads Geniee SSP MicroAd COMPASS AJA SSP Taboola Ogury FreakOut。
+        国産: fluct(adingo.jp)=CARTA HD | YieldOne(impact-ad.jp)=P1/DAC(博報堂DY) | adstir(ad-stir.com)=ユナイテッド | Ad Generation=Supership(KDDI)
+      </div>
+
+      {/* Site List Download */}
+      <div style={{ marginTop: 14, padding: "10px 12px", background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>📋 クロール対象サイト一覧</div>
+            <div style={{ fontSize: 9, color: "#9ca3af" }}>Tranco List .jp上位{SITES.length}ドメイン（ランク {SITES[0].rank}位〜{SITES[SITES.length - 1].rank}位）</div>
+          </div>
+          <button
+            onClick={function () {
+              var csv = "tranco_rank,domain,ads_txt_url\n";
+              SITES.forEach(function (s) {
+                csv += s.rank + "," + s.domain + ",https://" + s.domain + "/ads.txt\n";
+              });
+              var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+              var url = URL.createObjectURL(blob);
+              var a = document.createElement("a");
+              a.href = url;
+              a.download = "tranco_jp_top" + SITES.length + "_domains.csv";
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            style={{
+              padding: "6px 14px", fontSize: 11, fontWeight: 600,
+              background: "#1a1a1a", color: "#fff", border: "none",
+              borderRadius: 6, cursor: "pointer", whiteSpace: "nowrap",
+            }}
+          >
+            CSV ダウンロード
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
