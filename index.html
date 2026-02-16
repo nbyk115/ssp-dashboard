@@ -12,7 +12,287 @@
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState, useMemo } = React;
+
+
+
+
+
+
+
+function ScatterMap() {
+  var _a = useState("all"), scF = _a[0], setScF = _a[1];
+  var _b = useState(null), hover = _b[0], setHover = _b[1];
+  var ref = useRef(null);
+  var _c = useState(600), boxW = _c[0], setBoxW = _c[1];
+
+  useEffect(function () {
+    function measure() {
+      if (ref.current) {
+        setBoxW(ref.current.getBoundingClientRect().width);
+      }
+    }
+    measure();
+    window.addEventListener("resize", measure);
+    return function () { window.removeEventListener("resize", measure); };
+  }, []);
+
+  var fd = DATA;
+  if (scF === "jp") fd = DATA.filter(function (x) { return x.o === "JP"; });
+  if (scF === "gl") fd = DATA.filter(function (x) { return x.o !== "JP"; });
+
+  var qualSorted = fd.filter(function (x) { return x.t >= TH; })
+    .map(function (s) { return Object.assign({}, s, { sc: calcSpo(s) }); })
+    .sort(function (a, b) { return b.sc - a.sc; });
+
+  var t3 = {};
+  var t5 = {};
+  qualSorted.slice(0, 3).forEach(function (x) { t3[x.n] = true; });
+  qualSorted.slice(0, 5).forEach(function (x) { t5[x.n] = true; });
+
+  var W = boxW;
+  var H = Math.min(520, Math.max(360, W * 0.65));
+  var pl = 48, pr = 24, pt = 14, pb = 32;
+  var pw = W - pl - pr;
+  var ph = H - pt - pb;
+  var sM = Math.max.apply(null, fd.map(function (x) { return x.t; }));
+
+  // X軸/Y軸: 足切り以上のデータで範囲を決定（足切り以下は範囲外にはみ出しても可）
+  var qualFd = fd.filter(function (x) { return x.t >= TH; });
+  var sArr = qualFd.map(function (x) { return x.s; });
+  var sMin = Math.min.apply(null, sArr);
+  var sMax = Math.max.apply(null, sArr);
+  var sPad = Math.max(4, Math.round((sMax - sMin) * 0.15));
+  var sLo = Math.max(0, sMin - sPad);
+  var sHi = Math.min(TS, sMax + sPad);
+
+  // Y軸: DIRECT率の実分布に合わせてズーム
+  var dArr = qualFd.map(function (x) { return x.d / x.t; });
+  var dMin = Math.min.apply(null, dArr);
+  var dMax = Math.max.apply(null, dArr);
+  var dPad = Math.max(0.03, (dMax - dMin) * 0.15);
+  var dLo = Math.max(0, dMin - dPad);
+  var dHi = Math.min(1, dMax + dPad);
+
+  var gridLines = [];
+  [0.25, 0.5, 0.75].forEach(function (v, i) {
+    gridLines.push(
+      <line key={"gv" + i} x1={pl + v * pw} y1={pt} x2={pl + v * pw} y2={pt + ph} stroke="#eee" />,
+      <line key={"gh" + i} x1={pl} y1={pt + (1 - v) * ph} x2={pl + pw} y2={pt + (1 - v) * ph} stroke="#eee" />
+    );
+  });
+
+  var axisLabels = [];
+  [0, 0.25, 0.5, 0.75, 1].forEach(function (v, i) {
+    var xVal = Math.round(sLo + v * (sHi - sLo));
+    var yVal = (dLo + v * (dHi - dLo)) * 100;
+    axisLabels.push(
+      <text key={"ax" + i} x={pl + v * pw} y={pt + ph + 15} textAnchor="middle" fill="#bbb" fontSize={9} fontFamily="monospace">
+        {xVal}
+      </text>
+    );
+    axisLabels.push(
+      <text key={"ay" + i} x={pl - 5} y={pt + (1 - v) * ph + 3} textAnchor="end" fill="#bbb" fontSize={9} fontFamily="monospace">
+        {yVal.toFixed(0) + "%"}
+      </text>
+    );
+  });
+
+  var hitAreas = [];
+  var dots = [];
+  var labels = [];
+
+  fd.forEach(function (s) {
+    var cx = pl + Math.max(0, Math.min(1, (s.s - sLo) / (sHi - sLo))) * pw;
+    var dr = s.d / s.t;
+    var cy = pt + (1 - Math.max(0, Math.min(1, (dr - dLo) / (dHi - dLo)))) * ph;
+    var rd = Math.max(5, Math.min(22, Math.sqrt(s.t / sM) * 22));
+    var ct = s.t < TH;
+    var i3 = t3[s.n] || false;
+    var i5 = t5[s.n] || false;
+    var isHov = hover === s.n;
+    var fill = ct ? "#ccc" : s.o === "JP" ? "#e11d48" : "#6366f1";
+    var op = isHov ? 0.95 : ct ? 0.3 : i3 ? 0.85 : i5 ? 0.7 : 0.5;
+    var sw = isHov ? 3 : i3 ? 3 : i5 ? 2.5 : 1;
+    var sc = isHov ? "#333" : i5 ? "#f59e0b" : "white";
+
+    dots.push(
+      <circle key={"c" + s.n} cx={cx} cy={cy} r={isHov ? rd + 2 : rd} fill={fill} opacity={op} stroke={sc} strokeWidth={sw} />
+    );
+
+    hitAreas.push(
+      <circle
+        key={"h" + s.n}
+        cx={cx}
+        cy={cy}
+        r={Math.max(rd, 12)}
+        fill="transparent"
+        onMouseEnter={function () { setHover(s.n); }}
+        onMouseLeave={function () { setHover(null); }}
+        style={{ cursor: "pointer" }}
+      />
+    );
+
+    if (i3 && !ct && !isHov) {
+      dots.push(
+        <text key={"star" + s.n} x={cx} y={cy + 4} textAnchor="middle" fontSize={11} fill="#f59e0b">{"★"}</text>
+      );
+    }
+
+    var labelColor = ct ? "#bbb" : s.o === "JP" ? "#c1121f" : "#444";
+    var labelWeight = isHov ? "700" : i3 ? "700" : i5 ? "600" : "400";
+    var labelOp = ct ? 0.35 : 1;
+    var lbl = s.b.length > 15 ? s.b.slice(0, 13) + "…" : s.b;
+    var lx = cx + rd + 4;
+    var anc = "start";
+    if (lx + 70 > pl + pw) { lx = cx - rd - 4; anc = "end"; }
+    labels.push({ x: lx, y: cy + 3, t: lbl, a: anc, oy: cy, op: labelOp, fw: labelWeight, fc: labelColor, k: s.n, isHov: isHov });
+  });
+
+  labels.sort(function (a, b) { return a.oy - b.oy; });
+  for (var i = 1; i < labels.length; i++) {
+    if (Math.abs(labels[i].y - labels[i - 1].y) < 12) {
+      labels[i].y = labels[i - 1].y + 12;
+    }
+  }
+
+  var labelEls = labels.map(function (lb) {
+    return (
+      <text
+        key={"lb" + lb.k}
+        x={lb.x}
+        y={lb.y}
+        textAnchor={lb.a}
+        fill={lb.isHov ? "#1a1a1a" : lb.fc}
+        fontSize={lb.isHov ? 10 : 9}
+        fontFamily="monospace"
+        fontWeight={lb.fw}
+        opacity={lb.op}
+      >
+        {lb.t}
+      </text>
+    );
+  });
+
+  var hoverInfo = null;
+  if (hover) {
+    var hs = DATA.find(function (x) { return x.n === hover; });
+    if (hs) {
+      var dp = ((hs.d / hs.t) * 100).toFixed(1);
+      var sc2 = calcSpo(hs);
+      hoverInfo = (
+        <div style={{ background: "#fff", border: "1px solid #e5e5e5", borderRadius: 8, padding: "8px 12px", marginTop: 8, fontSize: 11, display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center" }}>
+          <span style={{ fontWeight: 700, fontSize: 13 }}>
+            {hs.o === "JP" ? "🇯🇵 " : ""}
+            {hs.b}
+          </span>
+          <span style={{ color: "#3b82f6" }}>DIRECT {dp}%</span>
+          <span style={{ color: "#555" }}>{hs.t.toLocaleString()} パス</span>
+          <span style={{ color: "#777" }}>{hs.s} / 130 サイト</span>
+          {sc2 !== null && <span style={{ fontWeight: 600, color: "#16a34a" }}>SPO {sc2.toFixed(1)}</span>}
+          {sc2 === null && <span style={{ color: "#ccc" }}>{"<"}1,000パス 足切り</span>}
+        </div>
+      );
+    }
+  }
+
+  function downloadPng() {
+    var svgEl = ref.current && ref.current.querySelector("svg");
+    if (!svgEl) return;
+    var svgData = new XMLSerializer().serializeToString(svgEl);
+    var canvas = document.createElement("canvas");
+    var scale = 2;
+    canvas.width = W * scale;
+    canvas.height = H * scale;
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    var img = new Image();
+    img.onload = function () {
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      var a = document.createElement("a");
+      a.download = "ssp_positioning_map.png";
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    };
+    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgData);
+  }
+
+  return (
+    <div style={{ maxWidth: 960, margin: "0 auto", padding: "20px 14px 32px", fontFamily: "system-ui, -apple-system, sans-serif", color: "#1a1a1a" }}>
+      <div style={{ borderBottom: "2px solid #1a1a1a", paddingBottom: 8, marginBottom: 16 }}>
+        <h2 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>SSP ポジショニングマップ</h2>
+        <p style={{ fontSize: 11, color: "#777", margin: "3px 0 0" }}>
+          横軸: 掲載数(130サイト中)　縦軸: DIRECT率　●サイズ: パス数
+        </p>
+      </div>
+
+      <div style={{ display: "flex", flexWrap: "wrap", marginBottom: 10, alignItems: "center" }}>
+        <Pill on={scF === "all"} onClick={function () { setScF("all"); }}>全SSP (23)</Pill>
+        <Pill on={scF === "jp"} onClick={function () { setScF("jp"); }}>国産のみ (9)</Pill>
+        <Pill on={scF === "gl"} onClick={function () { setScF("gl"); }}>海外のみ (14)</Pill>
+        <button
+          onClick={downloadPng}
+          style={{
+            padding: "6px 14px",
+            border: "1px solid #3b82f6",
+            borderRadius: 20,
+            fontSize: 12,
+            cursor: "pointer",
+            background: "#3b82f6",
+            color: "#fff",
+            whiteSpace: "nowrap",
+            marginLeft: 8,
+          }}
+        >
+          📥 PNG保存
+        </button>
+      </div>
+
+      <div ref={ref} style={{ width: "100%", border: "1px solid #e5e5e5", borderRadius: 8, overflow: "hidden", background: "#fff" }}>
+        <svg width={W} height={H} style={{ display: "block" }}>
+          <rect x={pl} y={pt} width={pw} height={ph} fill="#fafafa" rx={4} />
+          {gridLines}
+          <line x1={pl} y1={pt + ph} x2={pl + pw} y2={pt + ph} stroke="#ddd" />
+          <line x1={pl} y1={pt} x2={pl} y2={pt + ph} stroke="#ddd" />
+          {axisLabels}
+          <text x={pl + pw / 2} y={H - 4} textAnchor="middle" fill="#bbb" fontSize={9} fontFamily="monospace">
+            130サイト中の掲載数
+          </text>
+          <text x={10} y={pt + ph / 2} textAnchor="middle" fill="#bbb" fontSize={9} fontFamily="monospace" transform={"rotate(-90,10," + (pt + ph / 2) + ")"}>
+            DIRECT率
+          </text>
+          {dots}
+          {labelEls}
+          {hitAreas}
+        </svg>
+      </div>
+
+      {hoverInfo}
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 12, padding: "8px 0", fontSize: 10, color: "#999" }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#e11d48", display: "inline-block" }} />
+          国産
+        </span>
+        <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#6366f1", display: "inline-block" }} />
+          海外
+        </span>
+        <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#ccc", display: "inline-block" }} />
+          {"<"}1,000パス（足切り）
+        </span>
+        <span>{"★"} TOP3 / 太枠 = TOP5</span>
+      </div>
+
+      <div style={{ fontSize: 9, color: "#bbb", marginTop: 8, lineHeight: 1.6 }}>
+        SPO = Cov(30%) + D率(35%) + (Scale×D率)(35%)。RESELLERパスは他SSPからも買える在庫のため、スケール寄与を圧縮。
+        右上に位置するSSPほど「多くのサイトに直接繋がっている」＝SPOで選ばれやすい経路構造を持つ。
+      </div>
+    </div>
+  );
+}
+const { useState, useMemo, useEffect, useRef } = React;
 
 const TH = 1000;
 const TS = 130;
@@ -411,6 +691,7 @@ function App() {
     ["score", "🏆 スコア"],
     ["bar", "📊 パス数"],
     ["table", "📋 テーブル"],
+    ["map", "🗺️ マップ"],
   ];
 
   return (
@@ -507,6 +788,11 @@ function App() {
           </div>
           <DataTable data={filtered} sortKey={sK} sortDir={sD} onSort={doSort} />
         </div>
+      )}
+
+      {/* Map Tab */}
+      {tab === "map" && (
+        <ScatterMap />
       )}
 
       {/* Note */}
