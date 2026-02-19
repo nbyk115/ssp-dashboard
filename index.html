@@ -60,17 +60,37 @@ td.r{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:.72rem;}td
   <div class="hd">
     <h1>日本 ads.txt SSP プレゼンス分析</h1>
     <p>日本の主要パブリッシャーのads.txtから、日本市場で認知度の高いSSPに絞り、規模とサプライパス構造を可視化</p>
-    <div class="meta-row"><span>Potential Impressions上位200サイトから法人メディア115サイトに絞りads.txt取得</span><span>主要17社（Google AdX・APS・Criteo・Outbrain/Taboola・博報堂DY系・FreakOut除外）</span><span>2026-02-18 クロール / imp 2/10〜16</span></div>
+    <div class="meta-row"><span>Potential Impressions上位200サイトから法人メディア115サイトに絞りads.txt取得</span><span>主要20社（Google AdX・APS・Criteo・Outbrain/Taboola・博報堂DY系・FreakOut除外）</span><span>2026-02-18 クロール / imp 2/10〜16</span></div>
   </div>
   <div class="insight insight-amber">
     <h3>データソースと除外について</h3>
-    <strong>データソース:</strong> Potential Impressions（推定表示回数）ベースの日本サイト上位200サイトのうち、<strong>法人運営の編集メディア115サイト</strong>に絞ってads.txtを取得。UGC/個人ブログ、ゲーム攻略wiki、MFA疑いサイト、ツール系は除外。新聞社・TV局・出版社系Webメディア・大手ポータルが中心。インプレッション数は2026年2月10〜16日の期間データ。<br>
-    <strong>サイト絞り込みの理由:</strong> 「プレミアム」の業界統一定義は存在しないが、SSP評価の文脈では<strong>法人運営×編集コンテンツ×ブランドセーフ</strong>な在庫が対象。個人ブログやMFAサイトのads.txtエントリを含めるとリセラーパスが膨張し、実態と乖離したSSP評価になる。<br>
-    <strong>SSP除外（5社）:</strong><br>
-    &nbsp;&nbsp;● <strong>Criteo</strong> — Commerce Grid = 自社DSPデマンドが優位。TTD/DV360からCriteo経由で買付するメリットが薄い（参考: 1,554パス/D48%/110サイト）<br>
-    &nbsp;&nbsp;● <strong>Outbrain・Taboola</strong> — ネイティブADNW。クローズドなレコメンドデマンド構造で、オープンオークション型SSPと同列比較不適切（参考: Outbrain 890パス/D36%, Taboola 335パス/D84%）<br>
-    &nbsp;&nbsp;● <strong>DAC/adingo・YieldOne</strong> — 博報堂DYグループSSP。グループ内メディアとの直接接続でD率が構造的に高くなる。電通グループ視点ではSSP推奨対象として不適切（参考: adingo 1,778パス/D39%/114サイト, YieldOne 2,143パス/D20%/112サイト）<br>
-    <strong>その他除外:</strong> Google AdX（google.com）は10,311パス / 全115サイトで桁違いのため別集計。Amazon APS（TAM/UAM）はAmazon DSPデマンドが優位に働く構造のため除外。
+    <div style="margin-bottom:8px"><strong>📊 データソース</strong></div>
+    <ul style="margin:0 0 10px 16px;padding:0;list-style:disc;line-height:1.7;font-size:.72rem">
+      <li>Potential Impressions（推定表示回数）ベースの日本サイト<strong>上位200サイト</strong></li>
+      <li>うち<strong>法人運営の編集メディア115サイト</strong>に絞りads.txtを取得</li>
+      <li>新聞社・TV局・出版社系Webメディア・大手ポータルが中心</li>
+      <li>インプレッション期間: 2026年2月10〜16日</li>
+    </ul>
+    <div style="margin-bottom:8px"><strong>🔍 サイト絞り込みの理由</strong></div>
+    <ul style="margin:0 0 10px 16px;padding:0;list-style:disc;line-height:1.7;font-size:.72rem">
+      <li>「プレミアム」の業界統一定義は存在しない</li>
+      <li>SSP評価の文脈では<strong>法人運営 × 編集コンテンツ × ブランドセーフ</strong>な在庫が対象</li>
+      <li>UGC/個人ブログ・ゲーム攻略wiki・MFA疑いサイト・ツール系は除外</li>
+      <li>これらを含めるとリセラーパスが膨張し、実態と乖離したSSP評価になる</li>
+    </ul>
+    <div style="margin-bottom:8px"><strong>🚫 SSP除外（5社）</strong></div>
+    <ul style="margin:0 0 10px 16px;padding:0;list-style:disc;line-height:1.7;font-size:.72rem">
+      <li><strong>Criteo</strong> — 自社DSP(Commerce Grid)デマンドが優位。TTD/DV360からCriteo経由で買付するメリットが薄い<br><span style="color:#999;font-size:.62rem">参考: 1,554パス / D率48% / 110サイト</span></li>
+      <li><strong>Outbrain・Taboola</strong> — ネイティブADNW。クローズドなレコメンドデマンド構造で、オープンオークション型SSPとの比較不適切<br><span style="color:#999;font-size:.62rem">参考: Outbrain 890パス/D率36%、Taboola 335パス/D率84%</span></li>
+      <li><strong>YieldOne</strong>（impact-ad.jp）— 博報堂DYグループSSP。グループ内メディアとの直接接続でD率が構造的に高い。電通グループ視点では推奨対象外<br><span style="color:#999;font-size:.62rem">参考: 2,143パス / D率20% / 112サイト</span></li>
+    </ul>
+    <div style="margin-bottom:8px"><strong>⚠️ その他除外</strong></div>
+    <ul style="margin:0 0 6px 16px;padding:0;list-style:disc;line-height:1.7;font-size:.72rem">
+      <li><strong>Google AdX</strong>（google.com）— 10,311パス / 全115サイト。桁違いの規模で他SSPとの比較不成立のため別集計</li>
+      <li><strong>Amazon APS</strong>（TAM/UAM）— Amazon DSPデマンドが優位に働く構造のため除外</li>
+      <li><strong>FreakOut</strong>（fout.jp）— DSP専業。SSP機能は僅少（12パス）</li>
+    </ul>
+    <div style="font-size:.6rem;color:#999;margin-top:4px">※ adingo.jpはfluct（CARTA HD / 電通グループ）のads.txtドメイン。DACではない。</div>
   </div>
   <div class="insight insight-blue" id="spo-box"></div>
   <div class="insight insight-green" id="jp-box"></div>
@@ -82,15 +102,37 @@ td.r{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:.72rem;}td
 </div>
 <script>
 const TH=1000,TS=115,fmt=n=>n.toLocaleString();
-const PARTNERS={"media.net":{reason:"コンテキストSSP。HB経由でTTD/DV360から直接買付可能。D率38%はグローバルSSP中最高水準。独自のコンテキストマッチ技術でCookieレス環境に強み。"},"ad-stir.com":{reason:"電通グループ（CARTA HD）の配信管理プラットフォーム。国内プレミアム109サイトに導入。日本語フルサポート・国内メディアとの深い接続実績。リセラー構造上、在庫到達範囲は大手海外SSPと重複するが、日本市場に特化した運用支援・レポート・Deal設計が強み。"},"ogury.com":{reason:"Consent-based広告で差別化するモバイル特化SSP。110サイトに掲載。プライバシー規制強化に対応したCookieレス広告ソリューション。"}};
+const PARTNERS={"media.net":{reason:"コンテキストSSP。HB経由でTTD/DV360から直接買付可能。D率38%はグローバルSSP中最高水準。独自のコンテキストマッチ技術でCookieレス環境に強み。"},"adingo.jp":{reason:"電通グループ（CARTA HD）のSSP。国内プレミアム114サイトに導入、D率38.6%。ads.txt上のfluctのメインドメイン。日本市場に特化した運用支援・レポート・Deal設計が強み。"},"ogury.com":{reason:"Consent-based広告で差別化するモバイル特化SSP。110サイトに掲載。プライバシー規制強化に対応したCookieレス広告ソリューション。"}};
 // Category: "ssp" = SSP/Exchange, "hb" = 配信管理/メディエーション/ADNW
 const CAT={
   "pubmatic.com":"ssp","rubiconproject.com":"ssp","openx.com":"ssp","indexexchange.com":"ssp",
   "smartadserver.com":"ssp","video.unrulymedia.com":"ssp","inmobi.com":"ssp","media.net":"ssp",
   "gumgum.com":"ssp","teads.tv":"ssp","microad.co.jp":"ssp","ogury.com":"ssp","genieesspv.jp":"ssp",
-  "ad-stir.com":"hb","ad-generation.jp":"hb","i-mobile.co.jp":"hb","aja.vision":"hb"
+  "adingo.jp":"ssp","ad-stir.com":"hb","ad-generation.jp":"hb","i-mobile.co.jp":"hb","aja.vision":"hb","flux-g.com":"hb","fourm.jp":"hb"
 };
-const CAT_LABEL={"ssp":"SSP","hb":"配信管理","other":"参考"};
+const COMPANY={
+  "pubmatic.com":"PubMatic, Inc.（米・独立系）",
+  "rubiconproject.com":"Magnite, Inc.（米・独立系 / CTV強み）",
+  "openx.com":"OpenX Technologies, Inc.（米・独立系）",
+  "indexexchange.com":"Index Exchange, Inc.（加・独立系）",
+  "smartadserver.com":"Equativ（仏・旧SmartAdServer+Sharethrough統合）",
+  "video.unrulymedia.com":"Nexxen（旧Unruly / Tremor International）",
+  "inmobi.com":"InMobi Pte.（印・モバイル特化）",
+  "media.net":"Media.net（UAE / Yahoo!ネットワーク）",
+  "adingo.jp":"株式会社fluct（CARTA HD / 電通グループ）",
+  "gumgum.com":"GumGum, Inc.（米・コンテキスト広告）",
+  "teads.tv":"Teads（仏・Altice傘下 / インリード動画）",
+  "genieesspv.jp":"株式会社ジーニー（東証グロース）",
+  "microad.co.jp":"株式会社マイクロアド（東証グロース）",
+  "ogury.com":"Ogury Ltd.（仏・モバイル特化）",
+  "ad-stir.com":"ユナイテッド株式会社（東証グロース）",
+  "ad-generation.jp":"Supership株式会社（KDDI系）",
+  "i-mobile.co.jp":"株式会社アイモバイル（東証プライム）",
+  "aja.vision":"株式会社サイバーエージェント（東証プライム）",
+  "flux-g.com":"株式会社FLUX（独立系）",
+  "fourm.jp":"株式会社フォーエム（独立系）"
+};
+const CAT_LABEL={"ssp":"SSP","hb":"HBラッパー(配信管理)","other":"参考"};
 const CAT_COLOR={"ssp":"#6366f1","hb":"#f59e0b","other":"#aaa"};
 const sspDesc={
   "pubmatic.com":"グローバル最大級のSSP。TTD/DV360/Amazon DSPすべてから標準接続済み。あえて推奨する必要がない（どのDSPからもデフォルトで利用可能）。日本ではD率7%＝ほぼ全パスがリセラー経由で、他SSPと在庫が大幅に重複する。",
@@ -104,7 +146,10 @@ const sspDesc={
   "gumgum.com":"コンテキスト広告特化SSP。ページ内容をAI解析して広告配信。Cookieレス対応で注目度上昇中。⚠ CPMは他SSP比で高め（コンテキストターゲティングのプレミアム価格）。ブランディング案件向き。",
   "teads.tv":"仏発インリード動画SSP。記事中動画広告フォーマットで差別化。110/115サイトにDIRECT接続（D率59%）。パス数は少ないが掲載率94%。⚠ CPMは他SSP比で高め（動画フォーマット特性）。コスト効率を重視する場合は注意。",
   "i-mobile.co.jp":"アイモバイル。国産ADNW/SSP。RESELLER比率高くリセラーハブ的役割。アフィリエイト事業も展開。",
-  "ad-stir.com":"fluct（CARTA HD / 電通グループ）。国内最大級の配信管理プラットフォーム。109サイトに導入。DIRECT率は低いが、これはSSPをまとめる役割のため（品質の問題ではない）。在庫到達範囲はPubMatic等と大部分重複するが、日本市場特化の運用支援・Deal設計・日本語レポートが差別化要因。",
+  "adingo.jp":"fluct（CARTA HD / 電通グループ）。国内最大級のSSP。114サイトに導入、D率38.6%はMedia.netと同水準。ads.txtではadingo.jpがfluctの本体ドメイン。日本市場に特化した運用支援・Deal設計・日本語レポートが差別化要因。",
+  "ad-stir.com":"AdStir（ユナイテッド）。スマートフォン媒体社向けSSP/メディエーション。109サイトに導入。D率2.7%＝HBラッパー型。",
+  "flux-g.com":"FLUX（独立系）。パブリッシャー向けHBラッパー/収益最適化プラットフォーム。57サイトに導入。D率95%。",
+  "fourm.jp":"FourM（独立系）。パブリッシャー向けHBラッパー/メディアマネタイズ支援。45サイトに導入。D率100%（DIRECT only）。",
   "ad-generation.jp":"Supership（KDDI系）の国産SSP。アプリ・モバイルWeb向けメディエーション。",
   "genieesspv.jp":"ジーニー。国産SSP。独自HBソリューション展開。中小メディアへの導入が多い。",
   "microad.co.jp":"マイクロアド。国産SSP/DMP。UNIVERSEデータ連携が特徴。規模小だが直接契約率高。",
@@ -120,15 +165,18 @@ const raw=[
   {n:"video.unrulymedia.com",d:670,r:3389,t:4059,s:111,brand:"Nexxen",co:"旧Unruly",o:"UK"},
   {n:"inmobi.com",d:270,r:1441,t:1711,s:105,brand:"InMobi",co:"モバイルSSP",o:"IN"},
   {n:"media.net",d:589,r:961,t:1550,s:110,brand:"Media.net",co:"コンテキストSSP",o:"AE"},
+  {n:"adingo.jp",d:686,r:1092,t:1778,s:114,brand:"fluct",co:"CARTA HD / 電通グループ",o:"JP"},
   {n:"i-mobile.co.jp",d:37,r:1446,t:1483,s:105,brand:"i-mobile",co:"ADNW/SSP",o:"JP"},
   {n:"ad-generation.jp",d:230,r:930,t:1160,s:109,brand:"Ad Generation",co:"Supership / KDDI系",o:"JP"},
-  {n:"ad-stir.com",d:28,r:1013,t:1041,s:109,brand:"fluct",co:"CARTA HD / 電通グループ",o:"JP"},
+  {n:"ad-stir.com",d:28,r:1013,t:1041,s:109,brand:"AdStir",co:"ユナイテッド",o:"JP"},
   {n:"gumgum.com",d:221,r:818,t:1039,s:112,brand:"GumGum",co:"コンテキスト広告（SSP）",o:"US"},
   {n:"teads.tv",d:387,r:273,t:660,s:110,brand:"Teads",co:"インリード動画（SSP）",o:"FR"},
   {n:"genieesspv.jp",d:208,r:255,t:463,s:94,brand:"Geniee SSP",co:"SSP",o:"JP"},
   {n:"microad.co.jp",d:210,r:218,t:428,s:107,brand:"MicroAd COMPASS",co:"SSP/DMP",o:"JP"},
   {n:"aja.vision",d:36,r:317,t:353,s:104,brand:"AJA SSP",co:"サイバーエージェント（SSP）",o:"JP"},
   {n:"ogury.com",d:109,r:186,t:295,s:110,brand:"Ogury",co:"モバイル特化（SSP）",o:"FR"},
+  {n:"flux-g.com",d:82,r:4,t:86,s:57,brand:"FLUX",co:"独立系",o:"JP"},
+  {n:"fourm.jp",d:113,r:0,t:113,s:45,brand:"FourM",co:"独立系",o:"JP"},
 ];
 const grps={};
 const maxT=Math.max(...raw.filter(x=>x.t>=TH).map(x=>x.t));
@@ -169,16 +217,16 @@ function renderInsightBoxes(){
   const hbOnly=raw.filter(x=>CAT[x.n]==='hb').map(s=>({...s,hbs:hbScore(s)})).sort((a,b)=>b.hbs-a.hbs);
   const jp=sspOnly.filter(x=>x.o==='JP'),top5=sspOnly.slice(0,5),mx=top5[0]?top5[0].spo:1;
   const cutList=raw.filter(x=>CAT[x.n]==='ssp'&&x.t<TH);
-  const row=(i,s,color)=>`<div class="score-row"><span class="rank-num">${i+1}</span><span class="score-name">${s.o==='JP'?'<span class="jp-flag">🇯🇵</span> ':''}${s.brand}${PARTNERS[s.n]?' <span class="partner-badge">推奨</span>':''}</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:${Math.round(s.spo/mx*100)}%;background:${color}"></div></div><span class="score-val">${s.spo.toFixed(1)}</span><span class="score-detail">D${(s.d/s.t*100).toFixed(0)}% Cov${(s.s/TS*100).toFixed(0)}% ${fmt(s.t)}パス</span></div>`;
-  const hbRow=(i,s)=>`<div class="score-row"><span class="rank-num">${i+1}</span><span class="score-name">${s.o==='JP'?'<span class="jp-flag">🇯🇵</span> ':''}${s.brand}${PARTNERS[s.n]?' <span class="partner-badge">推奨</span>':''}</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:${Math.round(s.hbs)}%;background:#f59e0b"></div></div><span class="score-val">導入${Math.round(s.hbs)}%</span><span class="score-detail">${fmt(s.t)}パス D${(s.d/s.t*100).toFixed(0)}%</span></div>`;
+  const row=(i,s,color)=>`<div class="score-row"><span class="rank-num">${i+1}</span><span class="score-name">${s.o==='JP'?'<span class="jp-flag">🇯🇵</span> ':''}<span title="${COMPANY[s.n]||''}" style="cursor:help">${s.brand}</span>${PARTNERS[s.n]?' <span class="partner-badge">推奨</span>':''}</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:${Math.round(s.spo/mx*100)}%;background:${color}"></div></div><span class="score-val">${s.spo.toFixed(1)}</span><span class="score-detail">D${(s.d/s.t*100).toFixed(0)}% Cov${(s.s/TS*100).toFixed(0)}% ${fmt(s.t)}パス</span></div>`;
+  const hbRow=(i,s)=>`<div class="score-row"><span class="rank-num">${i+1}</span><span class="score-name">${s.o==='JP'?'<span class="jp-flag">🇯🇵</span> ':''}<span title="${COMPANY[s.n]||''}" style="cursor:help">${s.brand}</span>${PARTNERS[s.n]?' <span class="partner-badge">推奨</span>':''}</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:${Math.round(s.hbs)}%;background:#f59e0b"></div></div><span class="score-val">導入${Math.round(s.hbs)}%</span><span class="score-detail">${fmt(s.t)}パス D${(s.d/s.t*100).toFixed(0)}%</span></div>`;
   document.getElementById('spo-box').innerHTML=`
     <h3>🏆 SSP評価スコア TOP5</h3>
     ${top5.map((s,i)=>row(i,s,'#6366f1')).join('')}
     <div class="rule">SSP = パブリッシャーと直接接続してDSPにインプレッションを供給するプレイヤー。SSP評価スコア（カバレッジ30%＋DIRECT率35%＋スケール×D率35%）で評価。広告が届く経路の「直接性」と「網羅性」を数値化したもの。<br><br><strong>なぜ上位の大手SSP（PubMatic等）が「推奨」ではないのか：</strong>PubMatic・Magnite・OpenX・Index Exchangeは<strong>TTD/DV360/Amazon DSPすべてで標準接続済み</strong>。あえて推奨するまでもなくデフォルトで利用されている。また日本ではD率6〜11%＝ほぼリセラー経由で、SSP間で在庫が大幅に重複しており経路上の差別化が難しい。<br>推奨パートナー（Media.net / fluct / Ogury）は「標準接続では得られない固有の価値」を持つSSP。</div>`;
   document.getElementById('jp-box').innerHTML=`
-    <h3>📦 配信管理プラットフォーム</h3>
+    <h3>📦 HBラッパー（配信管理プラットフォーム）</h3>
     ${hbOnly.map((s,i)=>hbRow(i,s)).join('')}
-    <div class="rule">メディア側で複数SSPへの接続を一括管理するプラットフォーム。SSPそのものではなく<strong>SSPをまとめる役割</strong>。他SSP経由の経路が多いためリセラー比率が高くなる構造（<strong>品質の問題ではない</strong>）。「導入率」（115サイト中の掲載数）で評価。</div>`;
+    <div class="rule">HB（Header Bidding）= メディア側で複数SSPに同時入札させる仕組み。その接続を一括管理するプラットフォームがHBラッパー。SSPそのものではなく<strong>SSPをまとめる役割</strong>。<br>※ <strong>Magnite・fluct・Geniee</strong>もHBラッパー事業を展開しているが、SSPとしての評価が主のためSSPカテゴリに分類。他SSP経由の経路が多いためリセラー比率が高くなる構造（<strong>品質の問題ではない</strong>）。「導入率」（115サイト中の掲載数）で評価。</div>`;
 }
 renderInsightBoxes();
 
@@ -213,26 +261,26 @@ function render(){
     </div>
     <div class="sc-section">
       <h2>ポジショニングマップ</h2>
-      <div class="desc">横軸: 掲載サイト数(115中)。縦軸: DIRECT率。●サイズ: パス数。緑=推奨パートナー。黄=配信管理。破線枠=推奨ゾーン。足切りSSPは非表示（パートナー除く）。</div>
+      <div class="desc">横軸: 掲載サイト数(115中)。縦軸: DIRECT率。●サイズ: パス数。緑=推奨パートナー。黄=HBラッパー。破線枠=推奨ゾーン。足切りSSPは非表示（パートナー除く）。</div>
       <div class="sc-ctrl">
         <button class="pill ${scFilter==='all'?'on':''}" onclick="setSCF('all')">全SSP</button>
         <button class="pill ${scFilter==='jp'?'on':''}" onclick="setSCF('jp')">国産のみ</button>
         <button class="pill ${scFilter==='gl'?'on':''}" onclick="setSCF('gl')">海外のみ</button>
       </div>
       <div class="sc-box"><div id="sc" style="width:100%;height:420px;"></div>
-      <div class="sc-legend"><span><div class="ld" style="background:#10b981"></div>推奨パートナー</span><span><div class="ld" style="background:#6366f1"></div>SSP（海外）</span><span><div class="ld" style="background:#e11d48"></div>SSP（国産）</span><span><div class="ld" style="background:#f59e0b"></div>配信管理</span></div></div>
+      <div class="sc-legend"><span><div class="ld" style="background:#10b981"></div>推奨パートナー</span><span><div class="ld" style="background:#6366f1"></div>SSP（海外）</span><span><div class="ld" style="background:#e11d48"></div>SSP（国産）</span><span><div class="ld" style="background:#f59e0b"></div>HBラッパー</span></div></div>
     </div>
     <div class="tbl-section"><h2>詳細テーブル</h2><div class="tw"><table><thead><tr>
       ${th('t','#','c')}<th>SSP名</th><th>ads.txt</th>${th('d','Direct','r')}${th('r','Reseller','r')}${th('t','パス数','r')}${th('dpct','D/R構成')}${th('spo','評価スコア','r')}<th class="c">掲載数<br><span style="font-size:.5rem;color:#ccc">/ ${TS}</span></th>
     </tr></thead><tbody>
     ${sorted.map((s,i)=>{const dp=s.d/s.t*100,rp=s.r/s.t*100,sc=spoScore(s),hb=hbScore(s),cut=isCut(s),oc='otag-'+(['JP','US','FR','UK','CA'].includes(s.o)?s.o:'o');const bT=hasQ?hlT(s.brand):s.brand,dT=hasQ?hlT(s.n):s.n;const isPtnTbl=isPartner(s);const coLabel=s.co?` <span style="font-size:.55rem;color:#bbb">${s.co}</span>`:'';const dn=s.n;const isHB=CAT[s.n]==='hb';
-    return`<tr style="${cut?'opacity:.5':''}" onmouseenter="showTip(event,raw.find(x=>x.n==='${dn}'))" onmousemove="moveTip(event)" onmouseleave="hideTip()"><td class="c" style="color:#ccc;font-size:.66rem;font-family:'IBM Plex Mono',monospace">${i+1}</td><td class="nm">${bT}<span class="otag ${oc}">${s.o}</span>${catTag(s)}${coLabel}${cut?'<span class="cut-badge">&lt;1K</span>':''}${isPtnTbl?'<span class="partner-badge">推奨</span>':''}</td><td style="font-size:.66rem;color:#aaa;font-family:'IBM Plex Mono',monospace">${dT}</td><td class="r" style="color:#3b82f6">${fmt(s.d)}</td><td class="r" style="color:#f97316">${fmt(s.r)}</td><td class="r" style="font-weight:600">${fmt(s.t)}</td><td><div style="display:flex;align-items:center;gap:4px"><div class="mini-bar" style="width:${Math.max(28,s.t/dmax*80)}px"><div class="bd" style="width:${dp}%;height:100%"></div><div class="br" style="width:${rp}%;height:100%"></div></div><span class="ratio-label" style="font-size:.68rem"><span class="d-num">${dp.toFixed(0)}%</span><span class="sep-slash">/</span><span class="r-num">${rp.toFixed(0)}%</span></span></div></td><td class="r" style="font-weight:600;color:${isHB?'#d97706':sc===null?'#ddd':sc>=50?'#16a34a':sc>=35?'#555':'#aaa'}">${isHB?'<span style=\"font-size:.56rem\">導入</span>'+Math.round(hb)+'%':sc===null?'—':sc.toFixed(1)}</td><td class="c"><span style="font-size:.72rem;color:#555;font-family:'IBM Plex Mono',monospace">${s.s}</span><span style="font-size:.56rem;color:#ccc"> / ${TS}</span></td></tr>`;}).join('')}
+    return`<tr style="${cut?'opacity:.5':''}" onmouseenter="showTip(event,raw.find(x=>x.n==='${dn}'))" onmousemove="moveTip(event)" onmouseleave="hideTip()"><td class="c" style="color:#ccc;font-size:.66rem;font-family:'IBM Plex Mono',monospace">${i+1}</td><td class="nm"><span title="${COMPANY[dn]||''}" style="cursor:help">${bT}</span><span class="otag ${oc}">${s.o}</span>${catTag(s)}${coLabel}${cut?'<span class="cut-badge">&lt;1K</span>':''}${isPtnTbl?'<span class="partner-badge">推奨</span>':''}</td><td style="font-size:.66rem;color:#aaa;font-family:'IBM Plex Mono',monospace">${dT}</td><td class="r" style="color:#3b82f6">${fmt(s.d)}</td><td class="r" style="color:#f97316">${fmt(s.r)}</td><td class="r" style="font-weight:600">${fmt(s.t)}</td><td><div style="display:flex;align-items:center;gap:4px"><div class="mini-bar" style="width:${Math.max(28,s.t/dmax*80)}px"><div class="bd" style="width:${dp}%;height:100%"></div><div class="br" style="width:${rp}%;height:100%"></div></div><span class="ratio-label" style="font-size:.68rem"><span class="d-num">${dp.toFixed(0)}%</span><span class="sep-slash">/</span><span class="r-num">${rp.toFixed(0)}%</span></span></div></td><td class="r" style="font-weight:600;color:${isHB?'#d97706':sc===null?'#ddd':sc>=50?'#16a34a':sc>=35?'#555':'#aaa'}">${isHB?'<span style=\"font-size:.56rem\">導入</span>'+Math.round(hb)+'%':sc===null?'—':sc.toFixed(1)}</td><td class="c"><span style="font-size:.72rem;color:#555;font-family:'IBM Plex Mono',monospace">${s.s}</span><span style="font-size:.56rem;color:#ccc"> / ${TS}</span></td></tr>`;}).join('')}
     </tbody></table></div></div>
     <div class="ft">
       <strong>SSP評価スコア:</strong> カバレッジ(30%) + DIRECT率(35%) + (スケール×DIRECT率)(35%)。<strong>SSPカテゴリのみ</strong>に適用。1,000パス未満は対象外。マージン率やCPMは含まない。<br>
-      <strong>カテゴリ分類の理由:</strong> 配信管理型（fluct, Ad Generation, i-mobile, AJA SSP）はメディア側でSSPをまとめる役割を担っており、他SSP経由の経路が多いためリセラー比率が構造的に高くなる。品質の問題ではなくビジネスモデルの違い。SSPと同じスコアではフェアでないため「導入率」で別評価。<br>
+      <strong>カテゴリ分類の理由:</strong> HBラッパー（配信管理）型（AdStir, Ad Generation, i-mobile, AJA SSP, FLUX, FourM）はメディア側で複数SSPへの接続をまとめる役割を担っており、他SSP経由の経路が多いためリセラー比率が構造的に高くなる。品質の問題ではなくビジネスモデルの違い。SSPと同じスコアではフェアでないため「導入率」で別評価。<br>
       <strong>足切り(SSPカテゴリ内):</strong> Teads(660) Geniee SSP(463) MicroAd COMPASS(428) Ogury(295)<br>
-      <strong>国産SSP:</strong> fluct→CARTA HD ｜ Ad Generation→Supership(KDDI) ｜ AJA SSP→CA ｜ i-mobile→独立系<br><strong>除外SSP(5社):</strong> Criteo（自社DSP優位）/ Outbrain・Taboola（ネイティブADNW）/ DAC/adingo・YieldOne（博報堂DYグループ＝競合）
+      <strong>国産SSP/HBラッパー運営企業:</strong> fluct→CARTA HD(電通グループ) ｜ AdStir→ユナイテッド ｜ Ad Generation→Supership(KDDI) ｜ AJA SSP→サイバーエージェント ｜ i-mobile→アイモバイル ｜ Geniee SSP→ジーニー ｜ MicroAd→マイクロアド ｜ FLUX→FLUX ｜ FourM→フォーエム<br><strong>除外SSP:</strong> Criteo（自社DSP優位）/ Outbrain・Taboola（ネイティブADNW）/ YieldOne（博報堂DYグループ＝競合）/ FreakOut（DSP専業）
     </div>`;
   const inp=document.getElementById('si');if(inp&&searchQ)inp.value=searchQ;
   renderSC(scData,top3ids,top5ids);
