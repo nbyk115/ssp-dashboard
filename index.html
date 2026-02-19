@@ -4,846 +4,287 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>日本 ads.txt SSP プレゼンス分析</title>
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
-<style>body{margin:0;background:#fff;}</style>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}html,body{background:#fff;margin:0;}
+body{color:#1a1a1a;font-family:'Noto Sans JP',sans-serif;line-height:1.65;font-size:14px;}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 20px 64px;background:#fff;}
+.hd{margin-bottom:24px;border-bottom:2px solid #1a1a1a;padding-bottom:12px;}.hd h1{font-size:1.35rem;font-weight:700;}.hd p{font-size:.76rem;color:#777;margin-top:3px;}
+.meta-row{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;font-size:.68rem;color:#aaa;}.meta-row span{background:#f7f7f7;padding:2px 8px;border-radius:4px;}
+.insight{border-radius:8px;padding:16px 18px;margin-bottom:16px;font-size:.78rem;line-height:1.8;}
+.insight-blue{background:#f0f7ff;border:1px solid #bfdbfe;color:#1e40af;}.insight-green{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;}.insight-amber{background:#fffbeb;border:1px solid #fde68a;color:#92400e;}
+.insight h3{font-size:.88rem;font-weight:700;margin-bottom:6px;}
+.score-row{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:.78rem;}
+.rank-num{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:1rem;width:24px;text-align:right;}.score-name{font-weight:600;min-width:150px;}
+.score-bar-bg{flex:1;height:8px;background:rgba(0,0,0,.06);border-radius:4px;overflow:hidden;max-width:180px;}.score-bar-fill{height:100%;border-radius:4px;}
+.score-val{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.76rem;width:40px;text-align:right;}.score-detail{font-size:.62rem;color:inherit;opacity:.5;font-family:'IBM Plex Mono',monospace;}
+.rule{font-size:.68rem;color:inherit;opacity:.6;margin-top:8px;line-height:1.7;}.jp-flag{color:#e11d48;}
+.note{background:#fafafa;border-left:3px solid #ddd;padding:10px 14px;margin-bottom:20px;font-size:.74rem;color:#777;line-height:1.6;}.note strong{color:#555;}
+.ctrl{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.pill{padding:5px 13px;border:1px solid #ddd;border-radius:20px;font-size:.71rem;cursor:pointer;background:#fff;color:#999;font-family:'Noto Sans JP',sans-serif;transition:all .15s;white-space:nowrap;}.pill:hover{border-color:#aaa;color:#666;}.pill.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
+.sep{width:1px;height:16px;background:#e5e5e5;margin:0 3px;}
+.search{padding:5px 12px;border:1px solid #ddd;border-radius:20px;font-size:.72rem;font-family:'Noto Sans JP',sans-serif;outline:none;width:200px;color:#333;transition:border-color .15s;}.search:focus{border-color:#888;box-shadow:0 0 0 2px rgba(59,130,246,.08);}.search::placeholder{color:#ccc;}
+.hit-count{font-size:.64rem;color:#3b82f6;font-weight:600;margin-left:2px;}
+.legend{display:flex;gap:16px;margin-bottom:8px;font-size:.68rem;color:#aaa;}.legend span{display:flex;align-items:center;gap:4px;}.legend .ld{width:10px;height:10px;border-radius:2px;}
+.vol-row{display:grid;grid-template-columns:175px 1fr 60px 80px;gap:6px;align-items:center;padding:4px 0;border-bottom:1px solid #f5f5f5;}.vol-row:hover{background:#fefefe;}
+.vol-name{font-size:.76rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.vol-name .jp{color:#e11d48;}.vol-name .gl{color:#333;}.vol-name .dom{font-size:.58rem;color:#ccc;font-weight:400;display:block;font-family:'IBM Plex Mono',monospace;}.vol-name .co{font-size:.56rem;color:#bbb;font-weight:400;}
+.bar-wrap{position:relative;height:20px;}.bar-inner{display:flex;height:100%;border-radius:3px;overflow:hidden;position:absolute;left:0;top:0;}.bar-inner .bd{background:#3b82f6;}.bar-inner .br{background:#f97316;}
+.vol-total{font-size:.76rem;font-family:'IBM Plex Mono',monospace;color:#555;text-align:right;font-weight:600;}
+.ratio-label{font-size:.74rem;font-family:'IBM Plex Mono',monospace;display:flex;gap:2px;align-items:center;justify-content:flex-end;}.ratio-label .d-num{color:#3b82f6;font-weight:600;}.ratio-label .sep-slash{color:#ddd;}.ratio-label .r-num{color:#f97316;font-weight:600;}
+mark{background:#fde68a;color:#1a1a1a;border-radius:2px;padding:0 1px;}
+.vol-header{display:grid;grid-template-columns:175px 1fr 60px 80px;gap:6px;padding:2px 0 6px;font-size:.6rem;color:#bbb;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #e5e5e5;margin-bottom:2px;}.vol-header span:nth-child(3){text-align:right;}.vol-header span:nth-child(4){text-align:right;}
+.gcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;margin-bottom:16px;}
+.gc{border:1px solid #e5e5e5;border-radius:7px;padding:10px 12px;background:#fff;}.gc .gn{font-weight:700;font-size:.82rem;display:flex;align-items:center;gap:4px;margin-bottom:3px;}.gc .gn .dot{width:6px;height:6px;border-radius:2px;}.gc .gd{font-size:.68rem;color:#888;line-height:1.5;}.gc .gd b{color:#444;font-family:'IBM Plex Mono',monospace;font-weight:500;}.gc .gm{font-size:.6rem;color:#bbb;margin-top:3px;font-family:'IBM Plex Mono',monospace;}
+.sc-section{margin-bottom:32px;}.sc-section h2{font-size:1rem;font-weight:700;margin-bottom:3px;}.sc-section .desc{font-size:.72rem;color:#999;margin-bottom:8px;}
+.sc-ctrl{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap;font-size:.7rem;}
+.sc-box{border:1px solid #e5e5e5;border-radius:8px;overflow:hidden;background:#fff;}
+.sc-legend{display:flex;gap:14px;padding:7px 12px;font-size:.63rem;color:#bbb;border-top:1px solid #f0f0f0;flex-wrap:wrap;}.sc-legend span{display:flex;align-items:center;gap:3px;}.sc-legend .ld{width:6px;height:6px;border-radius:50%;}
+.tbl-section h2{font-size:1rem;font-weight:700;margin-bottom:10px;}.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:.6rem;color:#aaa;text-transform:uppercase;letter-spacing:.04em;padding:6px 7px;border-bottom:2px solid #e5e5e5;white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0;background:#fff;z-index:2;}
+th:hover{color:#666;}th.act{color:#1a1a1a;}th.r{text-align:right;}th.c{text-align:center;}
+td{padding:5px 7px;border-bottom:1px solid #f5f5f5;font-size:.76rem;}tr:hover td{background:#fcfcfc;}
+td.r{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:.72rem;}td.c{text-align:center;}td.nm{font-weight:600;white-space:nowrap;}
+.mini-bar{display:flex;height:10px;border-radius:2px;overflow:hidden;background:#f0f0f0;}.mini-bar .bd{background:#3b82f6;height:100%;}.mini-bar .br{background:#f97316;height:100%;}
+.otag{font-size:.54rem;padding:1px 4px;border-radius:3px;margin-left:2px;}.otag-JP{background:#fff1f2;color:#e11d48;}.otag-US{background:#eef2ff;color:#4f46e5;}.otag-FR{background:#f0fdf4;color:#16a34a;}.otag-UK{background:#fefce8;color:#ca8a04;}.otag-CA{background:#faf5ff;color:#9333ea;}.otag-o{background:#f7f7f7;color:#999;}
+.cut-badge{font-size:.54rem;color:#999;background:#f5f5f5;padding:1px 4px;border-radius:3px;margin-left:3px;}
+.ft{font-size:.6rem;color:#ccc;margin-top:24px;line-height:1.8;border-top:1px solid #f0f0f0;padding-top:12px;}
+.partner-badge{display:inline-block;font-size:.52rem;background:linear-gradient(135deg,#10b981,#059669);color:white;padding:1px 5px;border-radius:3px;margin-left:5px;font-weight:600;letter-spacing:.3px;vertical-align:middle;}.partner-row{background:linear-gradient(90deg,rgba(16,185,129,.04),transparent)!important;border-left:3px solid #10b981!important;}
+.cat-tag{display:inline-block;font-size:.48rem;padding:1px 4px;border-radius:2px;margin-left:4px;font-weight:600;letter-spacing:.2px;vertical-align:middle;border:1px solid;}.cat-ssp{color:#6366f1;border-color:#c7d2fe;background:#eef2ff;}.cat-hb{color:#d97706;border-color:#fde68a;background:#fffbeb;}.cat-other{color:#999;border-color:#e5e5e5;background:#fafafa;}
+.tooltip{position:fixed;max-width:340px;background:#1a1a1a;color:#eee;padding:10px 14px;border-radius:8px;font-size:.72rem;line-height:1.6;pointer-events:none;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.25);opacity:0;transition:opacity .15s;}.tooltip.vis{opacity:1;}.tooltip .tt-name{font-weight:700;font-size:.82rem;margin-bottom:3px;color:#fff;}.tooltip .tt-meta{font-size:.64rem;color:#999;margin-bottom:4px;}.tooltip .tt-desc{color:#ccc;}
+@media(max-width:768px){.vol-row,.vol-header{grid-template-columns:130px 1fr 50px 70px;}}
+</style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-
-
-
-
-
-
-
-function ScatterMap() {
-  var _a = useState("all"), scF = _a[0], setScF = _a[1];
-  var _b = useState(null), hover = _b[0], setHover = _b[1];
-  var ref = useRef(null);
-  var _c = useState(600), boxW = _c[0], setBoxW = _c[1];
-
-  useEffect(function () {
-    function measure() {
-      if (ref.current) {
-        setBoxW(ref.current.getBoundingClientRect().width);
-      }
-    }
-    measure();
-    window.addEventListener("resize", measure);
-    return function () { window.removeEventListener("resize", measure); };
-  }, []);
-
-  var fd = DATA;
-  if (scF === "jp") fd = DATA.filter(function (x) { return x.o === "JP"; });
-  if (scF === "gl") fd = DATA.filter(function (x) { return x.o !== "JP"; });
-
-  var qualSorted = fd.filter(function (x) { return x.t >= TH; })
-    .map(function (s) { return Object.assign({}, s, { sc: calcSpo(s) }); })
-    .sort(function (a, b) { return b.sc - a.sc; });
-
-  var t3 = {};
-  var t5 = {};
-  qualSorted.slice(0, 3).forEach(function (x) { t3[x.n] = true; });
-  qualSorted.slice(0, 5).forEach(function (x) { t5[x.n] = true; });
-
-  var W = boxW;
-  var H = Math.min(520, Math.max(360, W * 0.65));
-  var pl = 48, pr = 24, pt = 14, pb = 32;
-  var pw = W - pl - pr;
-  var ph = H - pt - pb;
-  var sM = Math.max.apply(null, fd.map(function (x) { return x.t; }));
-
-  // X軸/Y軸: 足切り以上のデータで範囲を決定（足切り以下は範囲外にはみ出しても可）
-  var qualFd = fd.filter(function (x) { return x.t >= TH; });
-  var sArr = qualFd.map(function (x) { return x.s; });
-  var sMin = Math.min.apply(null, sArr);
-  var sMax = Math.max.apply(null, sArr);
-  var sPad = Math.max(4, Math.round((sMax - sMin) * 0.15));
-  var sLo = Math.max(0, sMin - sPad);
-  var sHi = Math.min(TS, sMax + sPad);
-
-  // Y軸: DIRECT率の実分布に合わせてズーム
-  var dArr = qualFd.map(function (x) { return x.d / x.t; });
-  var dMin = Math.min.apply(null, dArr);
-  var dMax = Math.max.apply(null, dArr);
-  var dPad = Math.max(0.03, (dMax - dMin) * 0.15);
-  var dLo = Math.max(0, dMin - dPad);
-  var dHi = Math.min(1, dMax + dPad);
-
-  var gridLines = [];
-  [0.25, 0.5, 0.75].forEach(function (v, i) {
-    gridLines.push(
-      <line key={"gv" + i} x1={pl + v * pw} y1={pt} x2={pl + v * pw} y2={pt + ph} stroke="#eee" />,
-      <line key={"gh" + i} x1={pl} y1={pt + (1 - v) * ph} x2={pl + pw} y2={pt + (1 - v) * ph} stroke="#eee" />
-    );
-  });
-
-  var axisLabels = [];
-  [0, 0.25, 0.5, 0.75, 1].forEach(function (v, i) {
-    var xVal = Math.round(sLo + v * (sHi - sLo));
-    var yVal = (dLo + v * (dHi - dLo)) * 100;
-    axisLabels.push(
-      <text key={"ax" + i} x={pl + v * pw} y={pt + ph + 15} textAnchor="middle" fill="#bbb" fontSize={9} fontFamily="monospace">
-        {xVal}
-      </text>
-    );
-    axisLabels.push(
-      <text key={"ay" + i} x={pl - 5} y={pt + (1 - v) * ph + 3} textAnchor="end" fill="#bbb" fontSize={9} fontFamily="monospace">
-        {yVal.toFixed(0) + "%"}
-      </text>
-    );
-  });
-
-  var hitAreas = [];
-  var dots = [];
-  var labels = [];
-
-  fd.forEach(function (s) {
-    var cx = pl + Math.max(0, Math.min(1, (s.s - sLo) / (sHi - sLo))) * pw;
-    var dr = s.d / s.t;
-    var cy = pt + (1 - Math.max(0, Math.min(1, (dr - dLo) / (dHi - dLo)))) * ph;
-    var rd = Math.max(5, Math.min(22, Math.sqrt(s.t / sM) * 22));
-    var ct = s.t < TH;
-    var i3 = t3[s.n] || false;
-    var i5 = t5[s.n] || false;
-    var isHov = hover === s.n;
-    var fill = ct ? "#ccc" : s.o === "JP" ? "#e11d48" : "#6366f1";
-    var op = isHov ? 0.95 : ct ? 0.3 : i3 ? 0.85 : i5 ? 0.7 : 0.5;
-    var sw = isHov ? 3 : i3 ? 3 : i5 ? 2.5 : 1;
-    var sc = isHov ? "#333" : i5 ? "#f59e0b" : "white";
-
-    dots.push(
-      <circle key={"c" + s.n} cx={cx} cy={cy} r={isHov ? rd + 2 : rd} fill={fill} opacity={op} stroke={sc} strokeWidth={sw} />
-    );
-
-    hitAreas.push(
-      <circle
-        key={"h" + s.n}
-        cx={cx}
-        cy={cy}
-        r={Math.max(rd, 12)}
-        fill="transparent"
-        onMouseEnter={function () { setHover(s.n); }}
-        onMouseLeave={function () { setHover(null); }}
-        style={{ cursor: "pointer" }}
-      />
-    );
-
-    if (i3 && !ct && !isHov) {
-      dots.push(
-        <text key={"star" + s.n} x={cx} y={cy + 4} textAnchor="middle" fontSize={11} fill="#f59e0b">{"★"}</text>
-      );
-    }
-
-    var labelColor = ct ? "#bbb" : s.o === "JP" ? "#c1121f" : "#444";
-    var labelWeight = isHov ? "700" : i3 ? "700" : i5 ? "600" : "400";
-    var labelOp = ct ? 0.35 : 1;
-    var lbl = s.b.length > 15 ? s.b.slice(0, 13) + "…" : s.b;
-    var lx = cx + rd + 4;
-    var anc = "start";
-    if (lx + 70 > pl + pw) { lx = cx - rd - 4; anc = "end"; }
-    labels.push({ x: lx, y: cy + 3, t: lbl, a: anc, oy: cy, op: labelOp, fw: labelWeight, fc: labelColor, k: s.n, isHov: isHov });
-  });
-
-  labels.sort(function (a, b) { return a.oy - b.oy; });
-  for (var i = 1; i < labels.length; i++) {
-    if (Math.abs(labels[i].y - labels[i - 1].y) < 12) {
-      labels[i].y = labels[i - 1].y + 12;
-    }
-  }
-
-  var labelEls = labels.map(function (lb) {
-    return (
-      <text
-        key={"lb" + lb.k}
-        x={lb.x}
-        y={lb.y}
-        textAnchor={lb.a}
-        fill={lb.isHov ? "#1a1a1a" : lb.fc}
-        fontSize={lb.isHov ? 10 : 9}
-        fontFamily="monospace"
-        fontWeight={lb.fw}
-        opacity={lb.op}
-      >
-        {lb.t}
-      </text>
-    );
-  });
-
-  var hoverInfo = null;
-  if (hover) {
-    var hs = DATA.find(function (x) { return x.n === hover; });
-    if (hs) {
-      var dp = ((hs.d / hs.t) * 100).toFixed(1);
-      var sc2 = calcSpo(hs);
-      hoverInfo = (
-        <div style={{ background: "#fff", border: "1px solid #e5e5e5", borderRadius: 8, padding: "8px 12px", marginTop: 8, fontSize: 11, display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center" }}>
-          <span style={{ fontWeight: 700, fontSize: 13 }}>
-            {hs.o === "JP" ? "🇯🇵 " : ""}
-            {hs.b}
-          </span>
-          <span style={{ color: "#3b82f6" }}>DIRECT {dp}%</span>
-          <span style={{ color: "#555" }}>{hs.t.toLocaleString()} パス</span>
-          <span style={{ color: "#777" }}>{hs.s} / 130 サイト</span>
-          {sc2 !== null && <span style={{ fontWeight: 600, color: "#16a34a" }}>SPO {sc2.toFixed(1)}</span>}
-          {sc2 === null && <span style={{ color: "#ccc" }}>{"<"}1,000パス 足切り</span>}
-        </div>
-      );
-    }
-  }
-
-  function downloadPng() {
-    var svgEl = ref.current && ref.current.querySelector("svg");
-    if (!svgEl) return;
-    var svgData = new XMLSerializer().serializeToString(svgEl);
-    var canvas = document.createElement("canvas");
-    var scale = 2;
-    canvas.width = W * scale;
-    canvas.height = H * scale;
-    var ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    var img = new Image();
-    img.onload = function () {
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      var a = document.createElement("a");
-      a.download = "ssp_positioning_map.png";
-      a.href = canvas.toDataURL("image/png");
-      a.click();
-    };
-    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgData);
-  }
-
-  return (
-    <div style={{ maxWidth: 960, margin: "0 auto", padding: "20px 14px 32px", fontFamily: "system-ui, -apple-system, sans-serif", color: "#1a1a1a" }}>
-      <div style={{ borderBottom: "2px solid #1a1a1a", paddingBottom: 8, marginBottom: 16 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>SSP ポジショニングマップ</h2>
-        <p style={{ fontSize: 11, color: "#777", margin: "3px 0 0" }}>
-          横軸: 掲載数(130サイト中)　縦軸: DIRECT率　●サイズ: パス数
-        </p>
-      </div>
-
-      <div style={{ display: "flex", flexWrap: "wrap", marginBottom: 10, alignItems: "center" }}>
-        <Pill on={scF === "all"} onClick={function () { setScF("all"); }}>全SSP (23)</Pill>
-        <Pill on={scF === "jp"} onClick={function () { setScF("jp"); }}>国産のみ (9)</Pill>
-        <Pill on={scF === "gl"} onClick={function () { setScF("gl"); }}>海外のみ (14)</Pill>
-        <button
-          onClick={downloadPng}
-          style={{
-            padding: "6px 14px",
-            border: "1px solid #3b82f6",
-            borderRadius: 20,
-            fontSize: 12,
-            cursor: "pointer",
-            background: "#3b82f6",
-            color: "#fff",
-            whiteSpace: "nowrap",
-            marginLeft: 8,
-          }}
-        >
-          📥 PNG保存
-        </button>
-      </div>
-
-      <div ref={ref} style={{ width: "100%", border: "1px solid #e5e5e5", borderRadius: 8, overflow: "hidden", background: "#fff" }}>
-        <svg width={W} height={H} style={{ display: "block" }}>
-          <rect x={pl} y={pt} width={pw} height={ph} fill="#fafafa" rx={4} />
-          {gridLines}
-          <line x1={pl} y1={pt + ph} x2={pl + pw} y2={pt + ph} stroke="#ddd" />
-          <line x1={pl} y1={pt} x2={pl} y2={pt + ph} stroke="#ddd" />
-          {axisLabels}
-          <text x={pl + pw / 2} y={H - 4} textAnchor="middle" fill="#bbb" fontSize={9} fontFamily="monospace">
-            130サイト中の掲載数
-          </text>
-          <text x={10} y={pt + ph / 2} textAnchor="middle" fill="#bbb" fontSize={9} fontFamily="monospace" transform={"rotate(-90,10," + (pt + ph / 2) + ")"}>
-            DIRECT率
-          </text>
-          {dots}
-          {labelEls}
-          {hitAreas}
-        </svg>
-      </div>
-
-      {hoverInfo}
-
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 12, padding: "8px 0", fontSize: 10, color: "#999" }}>
-        <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#e11d48", display: "inline-block" }} />
-          国産
-        </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#6366f1", display: "inline-block" }} />
-          海外
-        </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#ccc", display: "inline-block" }} />
-          {"<"}1,000パス（足切り）
-        </span>
-        <span>{"★"} TOP3 / 太枠 = TOP5</span>
-      </div>
-
-      <div style={{ fontSize: 9, color: "#bbb", marginTop: 8, lineHeight: 1.6 }}>
-        SPO = Cov(30%) + D率(35%) + (Scale×D率)(35%)。RESELLERパスは他SSPからも買える在庫のため、スケール寄与を圧縮。
-        右上に位置するSSPほど「多くのサイトに直接繋がっている」＝SPOで選ばれやすい経路構造を持つ。
-      </div>
-    </div>
-  );
-}
-const { useState, useMemo, useEffect, useRef } = React;
-
-const TH = 1000;
-const TS = 130;
-const fmt = (n) => n.toLocaleString();
-
-const SITES = [
-  { rank: 461, domain: "yahoo.co.jp" },{ rank: 507, domain: "amazon.co.jp" },{ rank: 541, domain: "rakuten.co.jp" },
-  { rank: 787, domain: "ameblo.jp" },{ rank: 988, domain: "google.co.jp" },{ rank: 1050, domain: "ameba.jp" },
-  { rank: 1106, domain: "docomo.ne.jp" },{ rank: 1171, domain: "dmm.co.jp" },{ rank: 1179, domain: "itmedia.co.jp" },
-  { rank: 1185, domain: "tbs.co.jp" },{ rank: 1236, domain: "hotpepper.jp" },{ rank: 1347, domain: "tenki.jp" },
-  { rank: 1351, domain: "mbga.jp" },{ rank: 1360, domain: "suumo.jp" },{ rank: 1361, domain: "weathernews.jp" },
-  { rank: 1373, domain: "game8.jp" },{ rank: 1379, domain: "navitime.co.jp" },{ rank: 1390, domain: "zozo.jp" },
-  { rank: 1421, domain: "gamewith.jp" },{ rank: 1445, domain: "cmoa.jp" },{ rank: 1525, domain: "rakuten-sec.co.jp" },
-  { rank: 1527, domain: "kakuyomu.jp" },{ rank: 1538, domain: "mechacomic.jp" },{ rank: 1541, domain: "trilltrill.jp" },
-  { rank: 1634, domain: "jra.go.jp" },{ rank: 1638, domain: "site777.jp" },{ rank: 1648, domain: "jra.jp" },
-  { rank: 1650, domain: "ecnavi.jp" },{ rank: 1656, domain: "dto.jp" },{ rank: 1966, domain: "fantia.jp" },
-  { rank: 2401, domain: "hatena.ne.jp" },{ rank: 2494, domain: "sakura.ne.jp" },{ rank: 2703, domain: "nhk.or.jp" },
-  { rank: 2862, domain: "yimg.jp" },{ rank: 2958, domain: "adingo.jp" },{ rank: 3215, domain: "nicovideo.jp" },
-  { rank: 3227, domain: "infoseek.co.jp" },{ rank: 3237, domain: "dnsv.jp" },{ rank: 3371, domain: "cpi.ad.jp" },
-  { rank: 3548, domain: "xserver.jp" },{ rank: 3632, domain: "dns.jp" },{ rank: 3856, domain: "prtimes.jp" },
-  { rank: 3863, domain: "mynavi.jp" },{ rank: 3869, domain: "granbluefantasy.jp" },{ rank: 3952, domain: "yomiuri.co.jp" },
-  { rank: 4016, domain: "japanpost.jp" },{ rank: 4077, domain: "livedoor.jp" },{ rank: 4110, domain: "japantimes.co.jp" },
-  { rank: 4123, domain: "mainichi.jp" },{ rank: 4320, domain: "d-53.jp" },{ rank: 4321, domain: "mhlw.go.jp" },
-  { rank: 4549, domain: "biglobe.ne.jp" },{ rank: 4631, domain: "naver.jp" },{ rank: 4666, domain: "u-tokyo.ac.jp" },
-  { rank: 4851, domain: "dion.ne.jp" },{ rank: 4899, domain: "jst.go.jp" },{ rank: 4917, domain: "disney.co.jp" },
-  { rank: 4929, domain: "ntv.co.jp" },{ rank: 4932, domain: "jal.co.jp" },{ rank: 4939, domain: "softbank.jp" },
-  { rank: 5058, domain: "recruit.co.jp" },{ rank: 5257, domain: "jma.go.jp" },{ rank: 5451, domain: "tv-asahi.co.jp" },
-  { rank: 5484, domain: "excite.co.jp" },{ rank: 5736, domain: "gnavi.co.jp" },{ rank: 6003, domain: "exblog.jp" },
-  { rank: 6006, domain: "plala.or.jp" },{ rank: 6007, domain: "buyee.jp" },{ rank: 6064, domain: "nhk.jp" },
-  { rank: 6065, domain: "kuronekoyamato.co.jp" },{ rank: 6251, domain: "auone.jp" },{ rank: 6293, domain: "dns.ne.jp" },
-  { rank: 6359, domain: "mixi.jp" },{ rank: 6400, domain: "impress.co.jp" },{ rank: 6430, domain: "oricon.co.jp" },
-  { rank: 6447, domain: "goo.ne.jp" },{ rank: 6654, domain: "diamond.jp" },{ rank: 6701, domain: "ana.co.jp" },
-  { rank: 6740, domain: "meti.go.jp" },{ rank: 6859, domain: "mlit.go.jp" },{ rank: 6863, domain: "suruga-ya.jp" },
-  { rank: 6887, domain: "chunichi.co.jp" },{ rank: 6915, domain: "beforward.jp" },{ rank: 6930, domain: "sponichi.co.jp" },
-  { rank: 7172, domain: "main.jp" },{ rank: 7178, domain: "tver.jp" },{ rank: 7204, domain: "jorudan.co.jp" },
-  { rank: 7212, domain: "mizuhobank.co.jp" },{ rank: 7268, domain: "sbisec.co.jp" },{ rank: 7272, domain: "fnn.jp" },
-  { rank: 7279, domain: "homes.co.jp" },{ rank: 7288, domain: "toyota.jp" },{ rank: 7374, domain: "ismedia.jp" },
-  { rank: 7379, domain: "carview.co.jp" },{ rank: 7450, domain: "arpanet.jp" },{ rank: 7502, domain: "athome.co.jp" },
-  { rank: 7544, domain: "takashimaya.co.jp" },{ rank: 7675, domain: "president.jp" },{ rank: 7702, domain: "so-net.ne.jp" },
-  { rank: 7749, domain: "mcdonalds.co.jp" },{ rank: 7778, domain: "freee.co.jp" },{ rank: 7878, domain: "huffingtonpost.jp" },
-  { rank: 7905, domain: "kyoto-np.co.jp" },{ rank: 7912, domain: "wikiwiki.jp" },{ rank: 7933, domain: "tokubai.co.jp" },
-  { rank: 7964, domain: "mofa.go.jp" },{ rank: 7987, domain: "smbcnikko.co.jp" },{ rank: 8023, domain: "daily.co.jp" },
-  { rank: 8070, domain: "ocn.ne.jp" },{ rank: 8105, domain: "booklive.jp" },{ rank: 8139, domain: "palcloset.jp" },
-  { rank: 8144, domain: "p-bandai.jp" },{ rank: 8159, domain: "geocities.jp" },{ rank: 8171, domain: "minkabu.jp" },
-  { rank: 8201, domain: "furusato-tax.jp" },{ rank: 8219, domain: "kabutan.jp" },{ rank: 8288, domain: "nitori-net.jp" },
-  { rank: 8378, domain: "world.co.jp" },{ rank: 8463, domain: "melonbooks.co.jp" },{ rank: 8478, domain: "mamastar.jp" },
-  { rank: 8487, domain: "tokyo.lg.jp" },{ rank: 8503, domain: "skylark.co.jp" },{ rank: 8587, domain: "tokyo-sports.co.jp" },
-  { rank: 8621, domain: "nomura.co.jp" },{ rank: 8650, domain: "felissimo.co.jp" },{ rank: 8657, domain: "kyoto-u.ac.jp" },
-  { rank: 8816, domain: "kuruma-news.jp" },{ rank: 8825, domain: "shop-pro.jp" },{ rank: 8836, domain: "tkc.co.jp" },
-  { rank: 8864, domain: "papy.co.jp" },
+<div class="wrap">
+  <div class="hd">
+    <h1>日本 ads.txt SSP プレゼンス分析</h1>
+    <p>日本の主要パブリッシャーのads.txtから、日本市場で認知度の高いSSPに絞り、規模とサプライパス構造を可視化</p>
+    <div class="meta-row"><span>Potential Impressions上位200サイトから法人メディア115サイトに絞りads.txt取得</span><span>主要17社（Google AdX・APS・Criteo・Outbrain/Taboola・博報堂DY系・FreakOut除外）</span><span>2026-02-18 クロール / imp 2/10〜16</span></div>
+  </div>
+  <div class="insight insight-amber">
+    <h3>データソースと除外について</h3>
+    <strong>データソース:</strong> Potential Impressions（推定表示回数）ベースの日本サイト上位200サイトのうち、<strong>法人運営の編集メディア115サイト</strong>に絞ってads.txtを取得。UGC/個人ブログ、ゲーム攻略wiki、MFA疑いサイト、ツール系は除外。新聞社・TV局・出版社系Webメディア・大手ポータルが中心。インプレッション数は2026年2月10〜16日の期間データ。<br>
+    <strong>サイト絞り込みの理由:</strong> 「プレミアム」の業界統一定義は存在しないが、SSP評価の文脈では<strong>法人運営×編集コンテンツ×ブランドセーフ</strong>な在庫が対象。個人ブログやMFAサイトのads.txtエントリを含めるとリセラーパスが膨張し、実態と乖離したSSP評価になる。<br>
+    <strong>SSP除外（5社）:</strong><br>
+    &nbsp;&nbsp;● <strong>Criteo</strong> — Commerce Grid = 自社DSPデマンドが優位。TTD/DV360からCriteo経由で買付するメリットが薄い（参考: 1,554パス/D48%/110サイト）<br>
+    &nbsp;&nbsp;● <strong>Outbrain・Taboola</strong> — ネイティブADNW。クローズドなレコメンドデマンド構造で、オープンオークション型SSPと同列比較不適切（参考: Outbrain 890パス/D36%, Taboola 335パス/D84%）<br>
+    &nbsp;&nbsp;● <strong>DAC/adingo・YieldOne</strong> — 博報堂DYグループSSP。グループ内メディアとの直接接続でD率が構造的に高くなる。電通グループ視点ではSSP推奨対象として不適切（参考: adingo 1,778パス/D39%/114サイト, YieldOne 2,143パス/D20%/112サイト）<br>
+    <strong>その他除外:</strong> Google AdX（google.com）は10,311パス / 全115サイトで桁違いのため別集計。Amazon APS（TAM/UAM）はAmazon DSPデマンドが優位に働く構造のため除外。
+  </div>
+  <div class="insight insight-blue" id="spo-box"></div>
+  <div class="insight insight-green" id="jp-box"></div>
+  <div class="note">
+    <strong>「パス数」とは：</strong>各サイトのads.txt（広告販売許可リスト）に記載された、<strong>「このSSP経由で広告を売ってOK」という許可の行数</strong>。1サイトにつき複数のアカウント・経路があるため、115サイト分を合計すると数千〜数万になる。パス数が多い＝多くのサイトが多くの経路でそのSSPを許可している。リクエスト数やインプレッション数とは異なる。
+  </div>
+  <div id="app"></div>
+  <div class="tooltip" id="tip"><div class="tt-name"></div><div class="tt-meta"></div><div class="tt-desc"></div></div>
+</div>
+<script>
+const TH=1000,TS=115,fmt=n=>n.toLocaleString();
+const PARTNERS={"media.net":{reason:"コンテキストSSP。HB経由でTTD/DV360から直接買付可能。D率38%はグローバルSSP中最高水準。独自のコンテキストマッチ技術でCookieレス環境に強み。"},"ad-stir.com":{reason:"電通グループ（CARTA HD）の配信管理プラットフォーム。国内プレミアム109サイトに導入。日本語フルサポート・国内メディアとの深い接続実績。リセラー構造上、在庫到達範囲は大手海外SSPと重複するが、日本市場に特化した運用支援・レポート・Deal設計が強み。"},"ogury.com":{reason:"Consent-based広告で差別化するモバイル特化SSP。110サイトに掲載。プライバシー規制強化に対応したCookieレス広告ソリューション。"}};
+// Category: "ssp" = SSP/Exchange, "hb" = 配信管理/メディエーション/ADNW
+const CAT={
+  "pubmatic.com":"ssp","rubiconproject.com":"ssp","openx.com":"ssp","indexexchange.com":"ssp",
+  "smartadserver.com":"ssp","video.unrulymedia.com":"ssp","inmobi.com":"ssp","media.net":"ssp",
+  "gumgum.com":"ssp","teads.tv":"ssp","microad.co.jp":"ssp","ogury.com":"ssp","genieesspv.jp":"ssp",
+  "ad-stir.com":"hb","ad-generation.jp":"hb","i-mobile.co.jp":"hb","aja.vision":"hb"
+};
+const CAT_LABEL={"ssp":"SSP","hb":"配信管理","other":"参考"};
+const CAT_COLOR={"ssp":"#6366f1","hb":"#f59e0b","other":"#aaa"};
+const sspDesc={
+  "pubmatic.com":"グローバル最大級のSSP。TTD/DV360/Amazon DSPすべてから標準接続済み。あえて推奨する必要がない（どのDSPからもデフォルトで利用可能）。日本ではD率7%＝ほぼ全パスがリセラー経由で、他SSPと在庫が大幅に重複する。",
+  "rubiconproject.com":"旧Rubicon Project → Magnite。CTV/OTTに強み。TTD/DV360から標準接続済み。日本ではD率11%＝リセラー主体で、PubMatic等と在庫が重複。CTV領域では差別化あるがWeb面では経路上の優位性は薄い。",
+  "openx.com":"老舗SSP。TTD/DV360から標準接続済み。日本ではD率6%＝ほぼ全パスがリセラー経由。OpenAudience（独自ID）に強みがあるが、Web面の経路構造では他大手SSPとの差別化が難しい。",
+  "indexexchange.com":"カナダ発SSP/Exchange。透明性重視の経路設計。TTD/DV360から標準接続済み。日本ではD率9%＝リセラー主体。経路の透明性には定評があるが、在庫到達範囲はPubMatic等と大部分重複。",
+  "smartadserver.com":"仏Equativ（旧SmartAdServer）。欧州パブリッシャーに強い。キュレーション型SSP。",
+  "video.unrulymedia.com":"旧Unruly → Nexxen統合。動画SSPとして出発、CTV/OTTに展開。",
+  "inmobi.com":"インド発モバイル特化SSP。アプリ面に強みがあるが日本ではモバイルWebでも展開。",
+  "media.net":"Yahoo!/Bingコンテキストマッチ技術を持つSSP。HBプレイヤーとして着実にシェア拡大。D率38%はグローバルSSPの中で高水準。",
+  "gumgum.com":"コンテキスト広告特化SSP。ページ内容をAI解析して広告配信。Cookieレス対応で注目度上昇中。⚠ CPMは他SSP比で高め（コンテキストターゲティングのプレミアム価格）。ブランディング案件向き。",
+  "teads.tv":"仏発インリード動画SSP。記事中動画広告フォーマットで差別化。110/115サイトにDIRECT接続（D率59%）。パス数は少ないが掲載率94%。⚠ CPMは他SSP比で高め（動画フォーマット特性）。コスト効率を重視する場合は注意。",
+  "i-mobile.co.jp":"アイモバイル。国産ADNW/SSP。RESELLER比率高くリセラーハブ的役割。アフィリエイト事業も展開。",
+  "ad-stir.com":"fluct（CARTA HD / 電通グループ）。国内最大級の配信管理プラットフォーム。109サイトに導入。DIRECT率は低いが、これはSSPをまとめる役割のため（品質の問題ではない）。在庫到達範囲はPubMatic等と大部分重複するが、日本市場特化の運用支援・Deal設計・日本語レポートが差別化要因。",
+  "ad-generation.jp":"Supership（KDDI系）の国産SSP。アプリ・モバイルWeb向けメディエーション。",
+  "genieesspv.jp":"ジーニー。国産SSP。独自HBソリューション展開。中小メディアへの導入が多い。",
+  "microad.co.jp":"マイクロアド。国産SSP/DMP。UNIVERSEデータ連携が特徴。規模小だが直接契約率高。",
+  "aja.vision":"サイバーエージェントSSP。ABEMA等CTV在庫で知名度が高いが、Web面は104サイト中93%がRESELLER。CTV在庫はads.txt対象外のため本分析には含まれない。",
+  "ogury.com":"仏発モバイル特化SSP。Consent-based（同意ベース）広告を掲げ、プライバシー規制への対応力が強み。110/115サイトに掲載。D率37%。",
+};
+const raw=[
+  {n:"pubmatic.com",d:1556,r:18126,t:19682,s:115,brand:"PubMatic",co:"",o:"US"},
+  {n:"rubiconproject.com",d:1275,r:12039,t:13314,s:115,brand:"Magnite",co:"旧Rubicon Project",o:"US"},
+  {n:"openx.com",d:624,r:9029,t:9653,s:115,brand:"OpenX",co:"",o:"US"},
+  {n:"indexexchange.com",d:692,r:6481,t:7173,s:115,brand:"Index Exchange",co:"",o:"CA"},
+  {n:"smartadserver.com",d:776,r:5306,t:6082,s:114,brand:"Equativ",co:"旧SmartAdServer",o:"FR"},
+  {n:"video.unrulymedia.com",d:670,r:3389,t:4059,s:111,brand:"Nexxen",co:"旧Unruly",o:"UK"},
+  {n:"inmobi.com",d:270,r:1441,t:1711,s:105,brand:"InMobi",co:"モバイルSSP",o:"IN"},
+  {n:"media.net",d:589,r:961,t:1550,s:110,brand:"Media.net",co:"コンテキストSSP",o:"AE"},
+  {n:"i-mobile.co.jp",d:37,r:1446,t:1483,s:105,brand:"i-mobile",co:"ADNW/SSP",o:"JP"},
+  {n:"ad-generation.jp",d:230,r:930,t:1160,s:109,brand:"Ad Generation",co:"Supership / KDDI系",o:"JP"},
+  {n:"ad-stir.com",d:28,r:1013,t:1041,s:109,brand:"fluct",co:"CARTA HD / 電通グループ",o:"JP"},
+  {n:"gumgum.com",d:221,r:818,t:1039,s:112,brand:"GumGum",co:"コンテキスト広告（SSP）",o:"US"},
+  {n:"teads.tv",d:387,r:273,t:660,s:110,brand:"Teads",co:"インリード動画（SSP）",o:"FR"},
+  {n:"genieesspv.jp",d:208,r:255,t:463,s:94,brand:"Geniee SSP",co:"SSP",o:"JP"},
+  {n:"microad.co.jp",d:210,r:218,t:428,s:107,brand:"MicroAd COMPASS",co:"SSP/DMP",o:"JP"},
+  {n:"aja.vision",d:36,r:317,t:353,s:104,brand:"AJA SSP",co:"サイバーエージェント（SSP）",o:"JP"},
+  {n:"ogury.com",d:109,r:186,t:295,s:110,brand:"Ogury",co:"モバイル特化（SSP）",o:"FR"},
 ];
-
-const DATA = [
-  { n: "pubmatic.com", d: 1585, r: 16814, t: 18399, s: 117, b: "PubMatic", c: "", o: "US" },
-  { n: "rubiconproject.com", d: 1254, r: 11227, t: 12481, s: 118, b: "Magnite", c: "旧Rubicon Project", o: "US" },
-  { n: "openx.com", d: 650, r: 8484, t: 9134, s: 117, b: "OpenX", c: "", o: "US" },
-  { n: "indexexchange.com", d: 699, r: 6126, t: 6825, s: 115, b: "Index Exchange", c: "", o: "CA" },
-  { n: "smartadserver.com", d: 822, r: 5105, t: 5927, s: 115, b: "Equativ", c: "旧SmartAdServer", o: "FR" },
-  { n: "video.unrulymedia.com", d: 619, r: 3337, t: 3956, s: 113, b: "Nexxen", c: "旧Unruly", o: "UK" },
-  { n: "criteo.com", d: 810, r: 778, t: 1588, s: 110, b: "Criteo", c: "Commerce Grid", o: "FR" },
-  { n: "inmobi.com", d: 252, r: 1336, t: 1588, s: 104, b: "InMobi", c: "モバイルSSP", o: "IN" },
-  { n: "media.net", d: 548, r: 945, t: 1493, s: 109, b: "Media.net", c: "", o: "AE" },
-  { n: "gumgum.com", d: 203, r: 792, t: 995, s: 111, b: "GumGum", c: "コンテキスト広告", o: "US" },
-  { n: "outbrain.com", d: 280, r: 570, t: 850, s: 98, b: "Outbrain", c: "レコメンド型", o: "US" },
-  { n: "teads.tv", d: 336, r: 254, t: 590, s: 110, b: "Teads", c: "インリード動画", o: "FR" },
-  { n: "taboola.com", d: 287, r: 62, t: 349, s: 70, b: "Taboola", c: "レコメンド型", o: "US" },
-  { n: "ogury.com", d: 86, r: 194, t: 280, s: 102, b: "Ogury", c: "モバイル特化", o: "FR" },
-  { n: "impact-ad.jp", d: 440, r: 1637, t: 2077, s: 117, b: "YieldOne", c: "P1（DAC系列）", o: "JP" },
-  { n: "adingo.jp", d: 699, r: 993, t: 1692, s: 118, b: "fluct", c: "CARTA HD（旧adingo）", o: "JP" },
-  { n: "i-mobile.co.jp", d: 59, r: 1399, t: 1458, s: 106, b: "i-mobile", c: "", o: "JP" },
-  { n: "ad-stir.com", d: 61, r: 1052, t: 1113, s: 107, b: "adstir", c: "ユナイテッド", o: "JP" },
-  { n: "ad-generation.jp", d: 230, r: 866, t: 1096, s: 115, b: "Ad Generation", c: "Supership / KDDI系", o: "JP" },
-  { n: "genieesspv.jp", d: 232, r: 353, t: 585, s: 98, b: "Geniee SSP", c: "", o: "JP" },
-  { n: "microad.co.jp", d: 220, r: 246, t: 466, s: 107, b: "MicroAd COMPASS", c: "", o: "JP" },
-  { n: "aja.vision", d: 44, r: 323, t: 367, s: 100, b: "AJA SSP", c: "サイバーエージェント", o: "JP" },
-  { n: "fout.jp", d: 174, r: 0, t: 174, s: 12, b: "FreakOut", c: "DSP主力", o: "JP" },
-];
-
-const MAX_T = Math.max(...DATA.filter((x) => x.t >= TH).map((x) => x.t));
-
-function calcSpo(s) {
-  if (s.t < TH) return null;
-  var dr = (s.d / s.t) * 100;
-  var cv = (s.s / TS) * 100;
-  var vl = (Math.log(s.t) / Math.log(MAX_T)) * 100;
-  return cv * 0.3 + dr * 0.35 + vl * (dr / 100) * 0.35;
+const grps={};
+const maxT=Math.max(...raw.filter(x=>x.t>=TH).map(x=>x.t));
+const tipEl=document.getElementById('tip');
+function showTip(e,s){
+  const desc=sspDesc[s.n]||'';if(!desc)return;
+  const dp=(s.d/s.t*100).toFixed(0),sc=spoScore(s);
+  tipEl.querySelector('.tt-name').textContent=s.brand+(s.co?' — '+s.co:'');
+  tipEl.querySelector('.tt-meta').textContent=`${fmt(s.t)}パス / D${dp}% / ${s.s}サイト`+(sc!==null?' / 評価 '+sc.toFixed(1):'');
+  const pInfo=PARTNERS[s.n];tipEl.querySelector('.tt-desc').textContent=pInfo?'【推奨パートナー】'+pInfo.reason+'\n\n'+desc:desc;
+  tipEl.classList.add('vis');
+  const x=Math.min(e.clientX+12,window.innerWidth-360),y=e.clientY+16;
+  tipEl.style.left=x+'px';tipEl.style.top=y+'px';
 }
-
-function isCut(s) {
-  return s.t < TH;
+function moveTip(e){
+  const x=Math.min(e.clientX+12,window.innerWidth-360),y=e.clientY+16;
+  tipEl.style.left=x+'px';tipEl.style.top=y+'px';
 }
-
-function getOriginBg(o) {
-  var map = { JP: "#fff1f2", US: "#eef2ff", FR: "#f0fdf4", UK: "#fefce8", CA: "#faf5ff", IN: "#fff7ed", AE: "#f0f9ff" };
-  return map[o] || "#f7f7f7";
+function hideTip(){tipEl.classList.remove('vis');}
+// SSP評価スコア = Cov×30% + D-rate×35% + (Scale × D-rate/100)×35%  ※SSPカテゴリのみ
+// 配信管理は「導入率」で評価（D率はビジネスモデル上構造的に低くなるため）
+function spoScore(s){
+  if(CAT[s.n]==='hb') return null;
+  if(s.t<TH)return null;
+  const dr=s.d/s.t*100, cov=s.s/TS*100, vol=Math.log(s.t)/Math.log(maxT)*100;
+  return cov*.30 + dr*.35 + (vol*(dr/100))*.35;
 }
-function getOriginColor(o) {
-  var map = { JP: "#e11d48", US: "#4f46e5", FR: "#16a34a", UK: "#ca8a04", CA: "#9333ea", IN: "#ea580c", AE: "#0284c7" };
-  return map[o] || "#999";
+function hbScore(s){
+  if(CAT[s.n]!=='hb') return null;
+  return s.s/TS*100;
 }
+function isCut(s){return CAT[s.n]==='ssp' && s.t<TH;}
+function isPartner(s){return !!PARTNERS[s.n];}
+function catTag(s){const c=CAT[s.n]||'other';return '<span class="cat-tag cat-'+c+'">'+CAT_LABEL[c]+'</span>';}
 
-function Pill({ on, children, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        padding: "5px 12px",
-        border: on ? "1px solid #1a1a1a" : "1px solid #ddd",
-        borderRadius: 20,
-        fontSize: 11,
-        cursor: "pointer",
-        background: on ? "#1a1a1a" : "#fff",
-        color: on ? "#fff" : "#999",
-        whiteSpace: "nowrap",
-        marginRight: 4,
-        marginBottom: 4,
-      }}
-    >
-      {children}
-    </button>
-  );
+function renderInsightBoxes(){
+  const sspOnly=raw.filter(x=>CAT[x.n]==='ssp'&&x.t>=TH).map(s=>({...s,spo:spoScore(s)})).sort((a,b)=>b.spo-a.spo);
+  const hbOnly=raw.filter(x=>CAT[x.n]==='hb').map(s=>({...s,hbs:hbScore(s)})).sort((a,b)=>b.hbs-a.hbs);
+  const jp=sspOnly.filter(x=>x.o==='JP'),top5=sspOnly.slice(0,5),mx=top5[0]?top5[0].spo:1;
+  const cutList=raw.filter(x=>CAT[x.n]==='ssp'&&x.t<TH);
+  const row=(i,s,color)=>`<div class="score-row"><span class="rank-num">${i+1}</span><span class="score-name">${s.o==='JP'?'<span class="jp-flag">🇯🇵</span> ':''}${s.brand}${PARTNERS[s.n]?' <span class="partner-badge">推奨</span>':''}</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:${Math.round(s.spo/mx*100)}%;background:${color}"></div></div><span class="score-val">${s.spo.toFixed(1)}</span><span class="score-detail">D${(s.d/s.t*100).toFixed(0)}% Cov${(s.s/TS*100).toFixed(0)}% ${fmt(s.t)}パス</span></div>`;
+  const hbRow=(i,s)=>`<div class="score-row"><span class="rank-num">${i+1}</span><span class="score-name">${s.o==='JP'?'<span class="jp-flag">🇯🇵</span> ':''}${s.brand}${PARTNERS[s.n]?' <span class="partner-badge">推奨</span>':''}</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:${Math.round(s.hbs)}%;background:#f59e0b"></div></div><span class="score-val">導入${Math.round(s.hbs)}%</span><span class="score-detail">${fmt(s.t)}パス D${(s.d/s.t*100).toFixed(0)}%</span></div>`;
+  document.getElementById('spo-box').innerHTML=`
+    <h3>🏆 SSP評価スコア TOP5</h3>
+    ${top5.map((s,i)=>row(i,s,'#6366f1')).join('')}
+    <div class="rule">SSP = パブリッシャーと直接接続してDSPにインプレッションを供給するプレイヤー。SSP評価スコア（カバレッジ30%＋DIRECT率35%＋スケール×D率35%）で評価。広告が届く経路の「直接性」と「網羅性」を数値化したもの。<br><br><strong>なぜ上位の大手SSP（PubMatic等）が「推奨」ではないのか：</strong>PubMatic・Magnite・OpenX・Index Exchangeは<strong>TTD/DV360/Amazon DSPすべてで標準接続済み</strong>。あえて推奨するまでもなくデフォルトで利用されている。また日本ではD率6〜11%＝ほぼリセラー経由で、SSP間で在庫が大幅に重複しており経路上の差別化が難しい。<br>推奨パートナー（Media.net / fluct / Ogury）は「標準接続では得られない固有の価値」を持つSSP。</div>`;
+  document.getElementById('jp-box').innerHTML=`
+    <h3>📦 配信管理プラットフォーム</h3>
+    ${hbOnly.map((s,i)=>hbRow(i,s)).join('')}
+    <div class="rule">メディア側で複数SSPへの接続を一括管理するプラットフォーム。SSPそのものではなく<strong>SSPをまとめる役割</strong>。他SSP経由の経路が多いためリセラー比率が高くなる構造（<strong>品質の問題ではない</strong>）。「導入率」（115サイト中の掲載数）で評価。</div>`;
 }
+renderInsightBoxes();
 
-function ScoreRow({ rank, item, color, maxScore, minScore }) {
-  var sc = calcSpo(item);
-  if (sc === null) return null;
-  var dp = ((item.d / item.t) * 100).toFixed(0);
-  var range = maxScore - minScore;
-  var barPct = range > 0 ? ((sc - minScore) / range) * 85 + 15 : 100;
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "3px 0", fontSize: 12 }}>
-      <span style={{ fontFamily: "'SF Mono', Consolas, Monaco, monospace", fontWeight: 700, fontSize: 14, width: 22, textAlign: "right" }}>
-        {rank}
-      </span>
-      <span style={{ fontWeight: 600, minWidth: 120 }}>
-        {item.o === "JP" ? "🇯🇵 " : ""}
-        {item.b}
-      </span>
-      <div style={{ flex: 1, maxWidth: 140, height: 7, background: "rgba(0,0,0,.06)", borderRadius: 4, overflow: "hidden" }}>
-        <div style={{ width: barPct + "%", height: "100%", background: color, borderRadius: 4 }} />
+let filter='all',searchQ='',showGrp=false,scFilter='all',tblSort='t',tblDir=-1;
+function mq(s){if(!searchQ)return true;const q=searchQ.toLowerCase();return s.n.toLowerCase().includes(q)||s.brand.toLowerCase().includes(q)||(s.co&&s.co.toLowerCase().includes(q));}
+function hlT(t){if(!searchQ)return t;const q=searchQ.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return t.replace(new RegExp('('+q+')','gi'),'<mark>$1</mark>');}
+
+function render(){
+  let data=searchQ?raw.filter(mq):filter==='all'?raw:filter==='jp'?raw.filter(x=>x.o==='JP'):raw.filter(x=>x.o!=='JP');
+  const sorted=[...data].sort((a,b)=>{if(tblSort==='spo'){const sa=spoScore(a)||hbScore(a)||0,sb=spoScore(b)||hbScore(b)||0;return tblDir*(sb-sa);}if(tblSort==='dpct')return tblDir*((b.d/b.t)-(a.d/a.t));return tblDir*((b[tblSort]||0)-(a[tblSort]||0));});
+  const dmax=Math.max(...sorted.map(x=>x.t),1),hasQ=!!searchQ;
+  let scData=raw.filter(x=>!isCut(x)||isPartner(x));if(scFilter==='jp')scData=scData.filter(x=>x.o==='JP');else if(scFilter==='gl')scData=scData.filter(x=>x.o!=='JP');
+  const qualified=scData.filter(x=>CAT[x.n]==='ssp'&&x.t>=TH),scByScore=[...qualified].sort((a,b)=>spoScore(b)-spoScore(a));
+  const top5ids=new Set(),top3ids=new Set();
+  let gt={};if(showGrp){for(let[gn,gv]of Object.entries(grps)){let ms=raw.filter(x=>gv.m.includes(x.n));if(ms.length>=2)gt[gn]={d:ms.reduce((s,m)=>s+m.d,0),r:ms.reduce((s,m)=>s+m.r,0),t:ms.reduce((s,m)=>s+m.t,0),s:Math.max(...ms.map(m=>m.s)),cnt:ms.length,ms:ms.map(m=>`${m.brand} (${m.n})`)};}}
+  const th=(k,l,c='')=>`<th class="${c} ${tblSort===k?'act':''}" onclick="doSort('${k}')">${l}${tblSort===k?(tblDir===-1?' ↓':' ↑'):''}</th>`;
+  document.getElementById('app').innerHTML=`
+    <div class="ctrl">
+      <input type="text" class="search" id="si" placeholder="検索（全${raw.length}社）" oninput="doSearch(this.value)"/>${hasQ?`<span class="hit-count">${sorted.length}件</span>`:''}<div class="sep"></div>
+      <button class="pill ${filter==='all'&&!hasQ?'on':''}" onclick="setF('all')">すべて (${raw.length})</button>
+      <button class="pill ${filter==='jp'&&!hasQ?'on':''}" onclick="setF('jp')">国産 (${raw.filter(x=>x.o==='JP').length})</button>
+      <button class="pill ${filter==='gl'&&!hasQ?'on':''}" onclick="setF('gl')">海外 (${raw.filter(x=>x.o!=='JP').length})</button>
+      <div class="sep"></div><button class="pill ${showGrp?'on':''}" onclick="tgGrp()">グループ合算</button>
+    </div>
+    ${showGrp?renderGC(gt):''}
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:10px;">サプライパス数 × DIRECT / RESELLER構成</h2>
+      <div class="legend"><span><div class="ld" style="background:#3b82f6"></div>DIRECT</span><span><div class="ld" style="background:#f97316"></div>RESELLER</span></div>
+      <div class="vol-header"><span>SSP名</span><span>構成バー</span><span>パス数</span><span>D% / R%</span></div>
+      ${sorted.map(s=>{const dp=s.d/s.t*100,rp=s.r/s.t*100,w=s.t/dmax*100,isJP=s.o==='JP',cut=isCut(s);const bT=hasQ?hlT(s.brand):s.brand,dT=hasQ?hlT(s.n):s.n;const coT=s.co?`<span class="co"> ${s.co}</span>`:'';const dn=s.n;const isPtn=isPartner(s);
+      return`<div class="vol-row${isPtn?' partner-row':''}" onmouseenter="showTip(event,raw.find(x=>x.n==='${dn}'))" onmousemove="moveTip(event)" onmouseleave="hideTip()"><div class="vol-name"><span class="${isJP?'jp':'gl'}">${bT}</span>${isPtn?'<span class="partner-badge">推奨</span>':''}${catTag(s)}${coT}<span class="dom">${dT}</span></div><div class="bar-wrap"><div class="bar-inner" style="width:${Math.max(w,2)}%;opacity:${cut?.4:1}"><div class="bd" style="width:${dp}%;height:100%"></div><div class="br" style="width:${rp}%;height:100%"></div></div></div><div class="vol-total" style="${cut?'color:#ccc':''}">${fmt(s.t)}</div><div class="ratio-label"><span class="d-num" style="${cut?'color:#93c5fd':''}">${dp.toFixed(0)}%</span><span class="sep-slash">/</span><span class="r-num" style="${cut?'color:#fdba74':''}">${rp.toFixed(0)}%</span></div></div>`;}).join('')}
+    </div>
+    <div class="sc-section">
+      <h2>ポジショニングマップ</h2>
+      <div class="desc">横軸: 掲載サイト数(115中)。縦軸: DIRECT率。●サイズ: パス数。緑=推奨パートナー。黄=配信管理。破線枠=推奨ゾーン。足切りSSPは非表示（パートナー除く）。</div>
+      <div class="sc-ctrl">
+        <button class="pill ${scFilter==='all'?'on':''}" onclick="setSCF('all')">全SSP</button>
+        <button class="pill ${scFilter==='jp'?'on':''}" onclick="setSCF('jp')">国産のみ</button>
+        <button class="pill ${scFilter==='gl'?'on':''}" onclick="setSCF('gl')">海外のみ</button>
       </div>
-      <span style={{ fontFamily: "'SF Mono', Consolas, Monaco, monospace", fontWeight: 600, fontSize: 11, width: 36, textAlign: "right" }}>
-        {sc.toFixed(1)}
-      </span>
-      <span style={{ fontSize: 9, opacity: 0.5, fontFamily: "'SF Mono', Consolas, Monaco, monospace" }}>
-        D{dp}% {fmt(item.t)}パス
-      </span>
+      <div class="sc-box"><div id="sc" style="width:100%;height:420px;"></div>
+      <div class="sc-legend"><span><div class="ld" style="background:#10b981"></div>推奨パートナー</span><span><div class="ld" style="background:#6366f1"></div>SSP（海外）</span><span><div class="ld" style="background:#e11d48"></div>SSP（国産）</span><span><div class="ld" style="background:#f59e0b"></div>配信管理</span></div></div>
     </div>
-  );
+    <div class="tbl-section"><h2>詳細テーブル</h2><div class="tw"><table><thead><tr>
+      ${th('t','#','c')}<th>SSP名</th><th>ads.txt</th>${th('d','Direct','r')}${th('r','Reseller','r')}${th('t','パス数','r')}${th('dpct','D/R構成')}${th('spo','評価スコア','r')}<th class="c">掲載数<br><span style="font-size:.5rem;color:#ccc">/ ${TS}</span></th>
+    </tr></thead><tbody>
+    ${sorted.map((s,i)=>{const dp=s.d/s.t*100,rp=s.r/s.t*100,sc=spoScore(s),hb=hbScore(s),cut=isCut(s),oc='otag-'+(['JP','US','FR','UK','CA'].includes(s.o)?s.o:'o');const bT=hasQ?hlT(s.brand):s.brand,dT=hasQ?hlT(s.n):s.n;const isPtnTbl=isPartner(s);const coLabel=s.co?` <span style="font-size:.55rem;color:#bbb">${s.co}</span>`:'';const dn=s.n;const isHB=CAT[s.n]==='hb';
+    return`<tr style="${cut?'opacity:.5':''}" onmouseenter="showTip(event,raw.find(x=>x.n==='${dn}'))" onmousemove="moveTip(event)" onmouseleave="hideTip()"><td class="c" style="color:#ccc;font-size:.66rem;font-family:'IBM Plex Mono',monospace">${i+1}</td><td class="nm">${bT}<span class="otag ${oc}">${s.o}</span>${catTag(s)}${coLabel}${cut?'<span class="cut-badge">&lt;1K</span>':''}${isPtnTbl?'<span class="partner-badge">推奨</span>':''}</td><td style="font-size:.66rem;color:#aaa;font-family:'IBM Plex Mono',monospace">${dT}</td><td class="r" style="color:#3b82f6">${fmt(s.d)}</td><td class="r" style="color:#f97316">${fmt(s.r)}</td><td class="r" style="font-weight:600">${fmt(s.t)}</td><td><div style="display:flex;align-items:center;gap:4px"><div class="mini-bar" style="width:${Math.max(28,s.t/dmax*80)}px"><div class="bd" style="width:${dp}%;height:100%"></div><div class="br" style="width:${rp}%;height:100%"></div></div><span class="ratio-label" style="font-size:.68rem"><span class="d-num">${dp.toFixed(0)}%</span><span class="sep-slash">/</span><span class="r-num">${rp.toFixed(0)}%</span></span></div></td><td class="r" style="font-weight:600;color:${isHB?'#d97706':sc===null?'#ddd':sc>=50?'#16a34a':sc>=35?'#555':'#aaa'}">${isHB?'<span style=\"font-size:.56rem\">導入</span>'+Math.round(hb)+'%':sc===null?'—':sc.toFixed(1)}</td><td class="c"><span style="font-size:.72rem;color:#555;font-family:'IBM Plex Mono',monospace">${s.s}</span><span style="font-size:.56rem;color:#ccc"> / ${TS}</span></td></tr>`;}).join('')}
+    </tbody></table></div></div>
+    <div class="ft">
+      <strong>SSP評価スコア:</strong> カバレッジ(30%) + DIRECT率(35%) + (スケール×DIRECT率)(35%)。<strong>SSPカテゴリのみ</strong>に適用。1,000パス未満は対象外。マージン率やCPMは含まない。<br>
+      <strong>カテゴリ分類の理由:</strong> 配信管理型（fluct, Ad Generation, i-mobile, AJA SSP）はメディア側でSSPをまとめる役割を担っており、他SSP経由の経路が多いためリセラー比率が構造的に高くなる。品質の問題ではなくビジネスモデルの違い。SSPと同じスコアではフェアでないため「導入率」で別評価。<br>
+      <strong>足切り(SSPカテゴリ内):</strong> Teads(660) Geniee SSP(463) MicroAd COMPASS(428) Ogury(295)<br>
+      <strong>国産SSP:</strong> fluct→CARTA HD ｜ Ad Generation→Supership(KDDI) ｜ AJA SSP→CA ｜ i-mobile→独立系<br><strong>除外SSP(5社):</strong> Criteo（自社DSP優位）/ Outbrain・Taboola（ネイティブADNW）/ DAC/adingo・YieldOne（博報堂DYグループ＝競合）
+    </div>`;
+  const inp=document.getElementById('si');if(inp&&searchQ)inp.value=searchQ;
+  renderSC(scData,top3ids,top5ids);
 }
-
-function BarChart({ data, dmax, grpOpen, grpData }) {
-  return (
-    <div>
-      {grpOpen && grpData && (
-        <div style={{ border: "1px solid #fde68a", borderRadius: 7, padding: "8px 12px", marginBottom: 10 }}>
-          <div style={{ fontWeight: 700, fontSize: 12, marginBottom: 4 }}>国産SSP グループ関係</div>
-          {grpData.groups.map(function (g) {
-            return (
-              <div key={g.name} style={{ fontSize: 10, color: "#888", lineHeight: 1.6 }}>
-                <b style={{ color: "#555" }}>{g.name}</b>：{g.members.join("、")}
-              </div>
-            );
-          })}
-          <div style={{ fontSize: 9, color: "#bbb", marginTop: 4 }}>
-            ※ ads.txtドメイン単位の集計のため、同一グループでもドメインが異なれば別カウント
-          </div>
-        </div>
-      )}
-      <div style={{ display: "flex", gap: 12, marginBottom: 6, fontSize: 10, color: "#aaa" }}>
-        <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-          <span style={{ width: 9, height: 9, borderRadius: 2, background: "#3b82f6", display: "inline-block" }} />
-          DIRECT
-        </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-          <span style={{ width: 9, height: 9, borderRadius: 2, background: "#f97316", display: "inline-block" }} />
-          RESELLER
-        </span>
-      </div>
-      {data.map(function (s) {
-        var dp = (s.d / s.t) * 100;
-        var w = dmax > 1 ? (Math.log(s.t + 1) / Math.log(dmax + 1)) * 100 : 2;
-        var ct = isCut(s);
-        return (
-          <div
-            key={s.n}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "140px 1fr 52px 70px",
-              gap: 5,
-              alignItems: "center",
-              padding: "3px 0",
-              borderBottom: "1px solid #f5f5f5",
-              opacity: ct ? 0.45 : 1,
-            }}
-          >
-            <div style={{ fontSize: 11, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              <span style={{ color: s.o === "JP" ? "#e11d48" : "#333" }}>{s.b}</span>
-              <span style={{ display: "block", fontSize: 8, color: "#ccc", fontFamily: "'SF Mono', Consolas, Monaco, monospace" }}>{s.n}</span>
-            </div>
-            <div style={{ position: "relative", height: 16 }}>
-              <div
-                style={{
-                  display: "flex",
-                  height: "100%",
-                  borderRadius: 3,
-                  overflow: "hidden",
-                  position: "absolute",
-                  left: 0,
-                  top: 0,
-                  width: Math.max(w, 2) + "%",
-                }}
-              >
-                <div style={{ width: dp + "%", height: "100%", background: "#3b82f6" }} />
-                <div style={{ width: 100 - dp + "%", height: "100%", background: "#f97316" }} />
-              </div>
-            </div>
-            <div style={{ fontSize: 11, fontFamily: "'SF Mono', Consolas, Monaco, monospace", color: ct ? "#ccc" : "#555", textAlign: "right", fontWeight: 600 }}>
-              {fmt(s.t)}
-            </div>
-            <div style={{ fontSize: 10, fontFamily: "'SF Mono', Consolas, Monaco, monospace", display: "flex", gap: 1, justifyContent: "flex-end" }}>
-              <span style={{ color: "#3b82f6", fontWeight: 600 }}>{dp.toFixed(0)}%</span>
-              <span style={{ color: "#ddd" }}>/</span>
-              <span style={{ color: "#f97316", fontWeight: 600 }}>{(100 - dp).toFixed(0)}%</span>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
+function renderGC(gt){
+  let h='<div class="gcards">';
+  for(let[gn,gv]of Object.entries(gt)){const gc=grps[gn],dp=(gv.d/gv.t*100).toFixed(1);h+=`<div class="gc" style="border-color:${gc.bc}"><div class="gn"><div class="dot" style="background:${gc.c}"></div>${gn}</div><div class="gd">合算: <b>${fmt(gv.t)}</b>パス（D:<b>${fmt(gv.d)}</b> R:<b>${fmt(gv.r)}</b>）DIRECT率:<b>${dp}%</b> / 掲載: <b>${gv.s}</b>サイト</div><div class="gm">${gv.ms.join(' + ')}</div></div>`;}
+  return h+'</div>';
 }
-
-function DataTable({ data, sortKey, sortDir, onSort }) {
-  return (
-    <div style={{ overflowX: "auto" }}>
-      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
-        <thead>
-          <tr style={{ borderBottom: "2px solid #e5e5e5" }}>
-            <th style={{ textAlign: "center", padding: "4px 5px", fontSize: 9, color: "#aaa", width: 30 }}>#</th>
-            <th style={{ textAlign: "left", padding: "4px 5px", fontSize: 9, color: "#aaa" }}>SSP</th>
-            {[
-              ["d", "Direct"],
-              ["r", "Resell"],
-              ["t", "パス数"],
-              ["dpct", "D率"],
-              ["spo", "SPO"],
-              ["s", "掲載"],
-            ].map(function (pair) {
-              var k = pair[0];
-              var l = pair[1];
-              var arrow = sortKey === k ? (sortDir === -1 ? " ↓" : " ↑") : "";
-              return (
-                <th
-                  key={k}
-                  onClick={function () { onSort(k); }}
-                  style={{
-                    textAlign: "right",
-                    padding: "4px 5px",
-                    fontSize: 9,
-                    color: sortKey === k ? "#1a1a1a" : "#aaa",
-                    cursor: "pointer",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {l}{arrow}
-                </th>
-              );
-            })}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map(function (s, i) {
-            var dp = (s.d / s.t) * 100;
-            var sc = calcSpo(s);
-            var ct = isCut(s);
-            var spoColor = sc === null ? "#ddd" : sc >= 50 ? "#16a34a" : sc >= 35 ? "#555" : "#aaa";
-            return (
-              <tr key={s.n} style={{ borderBottom: "1px solid #f5f5f5", opacity: ct ? 0.45 : 1 }}>
-                <td style={{ textAlign: "center", padding: "3px 5px", color: "#ccc", fontFamily: "'SF Mono', Consolas, Monaco, monospace", fontSize: 9 }}>
-                  {i + 1}
-                </td>
-                <td style={{ padding: "3px 5px", fontWeight: 600, whiteSpace: "nowrap", fontSize: 11 }}>
-                  {s.b}
-                  <span
-                    style={{
-                      fontSize: 8,
-                      padding: "0 3px",
-                      borderRadius: 3,
-                      marginLeft: 3,
-                      background: getOriginBg(s.o),
-                      color: getOriginColor(s.o),
-                    }}
-                  >
-                    {s.o}
-                  </span>
-                  {ct && (
-                    <span style={{ fontSize: 8, color: "#999", background: "#f5f5f5", padding: "0 3px", borderRadius: 3, marginLeft: 2 }}>
-                      {"<1K"}
-                    </span>
-                  )}
-                </td>
-                <td style={{ textAlign: "right", padding: "3px 5px", fontFamily: "'SF Mono', Consolas, Monaco, monospace", color: "#3b82f6", fontSize: 10 }}>
-                  {fmt(s.d)}
-                </td>
-                <td style={{ textAlign: "right", padding: "3px 5px", fontFamily: "'SF Mono', Consolas, Monaco, monospace", color: "#f97316", fontSize: 10 }}>
-                  {fmt(s.r)}
-                </td>
-                <td style={{ textAlign: "right", padding: "3px 5px", fontFamily: "'SF Mono', Consolas, Monaco, monospace", fontWeight: 600, fontSize: 10 }}>
-                  {fmt(s.t)}
-                </td>
-                <td
-                  style={{
-                    textAlign: "right",
-                    padding: "3px 5px",
-                    fontFamily: "'SF Mono', Consolas, Monaco, monospace",
-                    color: dp > 30 ? "#16a34a" : dp > 15 ? "#555" : "#aaa",
-                    fontSize: 10,
-                  }}
-                >
-                  {dp.toFixed(0)}%
-                </td>
-                <td style={{ textAlign: "right", padding: "3px 5px", fontFamily: "'SF Mono', Consolas, Monaco, monospace", fontWeight: 600, color: spoColor, fontSize: 10 }}>
-                  {sc === null ? "—" : sc.toFixed(1)}
-                </td>
-                <td style={{ textAlign: "right", padding: "3px 5px", fontFamily: "'SF Mono', Consolas, Monaco, monospace", fontSize: 10 }}>{s.s}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function App() {
-  var _a = useState("score"), tab = _a[0], setTab = _a[1];
-  var _b = useState("all"), fl = _b[0], setFl = _b[1];
-  var _c = useState(""), q = _c[0], setQ = _c[1];
-  var _d = useState(false), grpOpen = _d[0], setGrpOpen = _d[1];
-  var _f = useState("t"), sK = _f[0], setSK = _f[1];
-  var _g = useState(-1), sD = _g[0], setSD = _g[1];
-
-  function doSort(k) {
-    if (sK === k) { setSD(function (d) { return d * -1; }); }
-    else { setSK(k); setSD(-1); }
+function renderSC(scData,top3ids,top5ids){
+  const el=document.getElementById('sc');if(!el)return;
+  const W=el.clientWidth,H=el.clientHeight,pa={l:46,r:16,t:14,b:34},pw=W-pa.l-pa.r,ph=H-pa.t-pa.b,sMax=Math.max(...scData.map(x=>x.t),1),hasQ=!!searchQ;
+  const sVals=scData.map(x=>x.s),sMin=Math.min(...sVals)-1,sRange=Math.max(...sVals)-sMin+1;
+  let svg=`<svg width="${W}" height="${H}" style="display:block"><rect x="${pa.l}" y="${pa.t}" width="${pw}" height="${ph}" fill="#fafafa" rx="4"/>`;
+  for(let v of[.25,.5,.75]){svg+=`<line x1="${pa.l+v*pw}" y1="${pa.t}" x2="${pa.l+v*pw}" y2="${pa.t+ph}" stroke="#eee"/><line x1="${pa.l}" y1="${pa.t+(1-v)*ph}" x2="${pa.l+pw}" y2="${pa.t+(1-v)*ph}" stroke="#eee"/>`;}
+  svg+=`<line x1="${pa.l}" y1="${pa.t+ph}" x2="${pa.l+pw}" y2="${pa.t+ph}" stroke="#ddd"/><line x1="${pa.l}" y1="${pa.t}" x2="${pa.l}" y2="${pa.t+ph}" stroke="#ddd"/>`;
+  svg+=`<text x="${pa.l+pw/2}" y="${H-4}" text-anchor="middle" fill="#bbb" font-size="9.5" font-family="IBM Plex Mono">${TS}サイト中の掲載数</text>`;
+  svg+=`<text x="8" y="${pa.t+ph/2}" text-anchor="middle" fill="#bbb" font-size="9.5" font-family="IBM Plex Mono" transform="rotate(-90,8,${pa.t+ph/2})">DIRECT率</text>`;
+  for(let v of[0,.5,1]){svg+=`<text x="${pa.l+v*pw}" y="${pa.t+ph+14}" text-anchor="middle" fill="#ddd" font-size="8" font-family="IBM Plex Mono">${Math.round(sMin+v*sRange)}</text><text x="${pa.l-4}" y="${pa.t+(1-v)*ph+3}" text-anchor="end" fill="#ddd" font-size="8" font-family="IBM Plex Mono">${Math.round(v*100)}%</text>`;}
+  // Partner recommended zone
+  const ptnData=scData.filter(s=>isPartner(s));
+  if(ptnData.length>=2){
+    const pxs=ptnData.map(s=>pa.l+((s.s-sMin)/sRange)*pw);
+    const pys=ptnData.map(s=>pa.t+(1-s.d/s.t)*ph);
+    const zx1=Math.min(...pxs)-28,zx2=Math.max(...pxs)+28,zy1=Math.min(...pys)-28,zy2=Math.max(...pys)+28;
+    svg+=`<rect x="${zx1}" y="${zy1}" width="${zx2-zx1}" height="${zy2-zy1}" rx="10" fill="rgba(16,185,129,.06)" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6,3"/>`;
+    svg+=`<text x="${zx2-4}" y="${zy1+13}" text-anchor="end" fill="#10b981" font-size="8.5" font-weight="600" font-family="IBM Plex Mono">推奨パートナー</text>`;
   }
-
-  var filtered = useMemo(function () {
-    var d;
-    if (q) {
-      var ql = q.toLowerCase();
-      d = DATA.filter(function (s) {
-        return s.n.toLowerCase().indexOf(ql) >= 0 || s.b.toLowerCase().indexOf(ql) >= 0 || (s.c && s.c.toLowerCase().indexOf(ql) >= 0);
-      });
-    } else if (fl === "jp") {
-      d = DATA.filter(function (x) { return x.o === "JP"; });
-    } else if (fl === "gl") {
-      d = DATA.filter(function (x) { return x.o !== "JP"; });
-    } else {
-      d = DATA.slice();
-    }
-    return d.sort(function (a, b) {
-      if (sK === "spo") return sD * ((calcSpo(b) || 0) - (calcSpo(a) || 0));
-      if (sK === "dpct") return sD * ((b.d / b.t) - (a.d / a.t));
-      return sD * ((b[sK] || 0) - (a[sK] || 0));
-    });
-  }, [fl, q, sK, sD]);
-
-  var qual = useMemo(function () {
-    return DATA.filter(function (x) { return x.t >= TH; })
-      .map(function (s) { return Object.assign({}, s, { sc: calcSpo(s) }); })
-      .sort(function (a, b) { return b.sc - a.sc; });
-  }, []);
-
-  var jpQual = useMemo(function () {
-    return qual.filter(function (x) { return x.o === "JP"; });
-  }, [qual]);
-
-  var cutList = DATA.filter(isCut);
-  var dmax = Math.max.apply(null, filtered.map(function (x) { return x.t; }).concat([1]));
-  var maxScore = qual.length > 0 ? qual[0].sc : 1;
-  var minScore = qual.length > 0 ? qual[qual.length - 1].sc : 0;
-  var jpMinScore = jpQual.length > 0 ? jpQual[jpQual.length - 1].sc : 0;
-
-  var grpData = useMemo(function () {
-    return {
-      groups: [
-        { name: "博報堂DYグループ", members: ["YieldOne (impact-ad.jp)"] },
-        { name: "CARTA HD", members: ["fluct (adingo.jp)"] },
-        { name: "ユナイテッド", members: ["adstir (ad-stir.com)"] },
-      ]
-    };
-  }, []);
-
-  var tabs = [
-    ["score", "🏆 スコア"],
-    ["bar", "📊 パス数"],
-    ["table", "📋 テーブル"],
-    ["map", "🗺️ マップ"],
-  ];
-
-  return (
-    <div style={{ maxWidth: 960, margin: "0 auto", padding: "20px 14px 40px", fontFamily: "'Inter', 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Meiryo', system-ui, sans-serif", color: "#1a1a1a", lineHeight: 1.6, fontSize: 13 }}>
-      {/* Header */}
-      <div style={{ borderBottom: "2px solid #1a1a1a", paddingBottom: 8, marginBottom: 16 }}>
-        <h1 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>日本 ads.txt SSP プレゼンス分析</h1>
-        <p style={{ fontSize: 11, color: "#777", margin: "2px 0 0" }}>
-          Tranco .jp 上位130サイト × 主要23社 — リセラーペナルティ付きSPOスコア
-        </p>
-        <div style={{ display: "flex", gap: 6, marginTop: 6, flexWrap: "wrap" }}>
-          <span style={{ background: "#f7f7f7", padding: "1px 7px", borderRadius: 4, fontSize: 9, color: "#aaa" }}>Google AdX・Amazon APS除く</span>
-          <span style={{ background: "#f7f7f7", padding: "1px 7px", borderRadius: 4, fontSize: 9, color: "#aaa" }}>2026-02-15 クロール</span>
-        </div>
-      </div>
-
-      {/* Data source */}
-      <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 8, padding: "10px 12px", marginBottom: 12, fontSize: 11, lineHeight: 1.6, color: "#92400e" }}>
-        <b>対象サイトについて：</b>サイトの人気度ランキング「Tranco List」の.jp上位130サイトを使用。
-        Trancoは2018年にAlexa（Amazon提供、2022年終了）に代わり大学研究者が公開した学術向けランキングで、複数データソースの統合によりランキング操作に強いのが特徴。
-        ただし業界公式のメディアリストではなく、ISPやインフラ系ドメインも含まれる点に注意。
-        Google AdXは82,148パス/全130サイトで桁違いのため別集計。Amazon APSはAmazon DSP優位の構造のため除外。
-      </div>
-
-      {/* Tabs */}
-      <div style={{ display: "flex", flexWrap: "wrap", marginBottom: 14 }}>
-        {tabs.map(function (pair) {
-          return <Pill key={pair[0]} on={tab === pair[0]} onClick={function () { setTab(pair[0]); }}>{pair[1]}</Pill>;
-        })}
-      </div>
-
-      {/* Score Tab */}
-      {tab === "score" && (
-        <div>
-          <div style={{ background: "#f0f7ff", border: "1px solid #bfdbfe", borderRadius: 8, padding: "12px 14px", marginBottom: 14, color: "#1e40af", fontSize: 11, lineHeight: 1.7 }}>
-            <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>🏆 SPOスコア TOP5</div>
-            <div style={{ fontSize: 10, marginBottom: 6, color: "#3b82a0" }}>
-              1,000パス以上の{qual.length}社対象
-            </div>
-            {qual.slice(0, 5).map(function (s, i) {
-              return <ScoreRow key={s.n} rank={i + 1} item={s} color={s.o === "JP" ? "#e11d48" : "#2563eb"} maxScore={maxScore} minScore={minScore} />;
-            })}
-            <div style={{ fontSize: 9, opacity: 0.55, marginTop: 8, lineHeight: 1.7 }}>
-              <b>算出:</b> カバレッジ×30% + DIRECT率×35% + (スケール×DIRECT率)×35%<br />
-              <b>ペナルティの理由:</b> RESELLERパスは他SSPからも買える在庫 → 「そのSSPを通す固有の理由」にならない。
-              DIRECTパスは当該SSP経由でしか届かない経路。ボリュームがあっても大半がリセラーなら代替可能。<br />
-              <b>足切り:</b> 1,000パス未満（{cutList.length}社）/ ※マージン率やCPMは含まない
-            </div>
-          </div>
-          <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 8, padding: "12px 14px", color: "#166534", fontSize: 11, lineHeight: 1.7 }}>
-            <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 4 }}>🇯🇵 国産SSP（{jpQual.length}社）</div>
-            {jpQual.slice(0, 5).map(function (s, i) {
-              return <ScoreRow key={s.n} rank={i + 1} item={s} color="#16a34a" maxScore={jpQual[0] ? jpQual[0].sc : 1} minScore={jpMinScore} />;
-            })}
-            <div style={{ fontSize: 9, opacity: 0.55, marginTop: 4 }}>
-              fluct(adingo.jp)はD率41%×カバレッジ91%で国産1位（全体2位）
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Bar Tab */}
-      {tab === "bar" && (
-        <div>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", marginBottom: 10 }}>
-            <input
-              placeholder="検索"
-              value={q}
-              onChange={function (e) { setQ(e.target.value); }}
-              style={{ padding: "5px 12px", border: "1px solid #ddd", borderRadius: 20, fontSize: 11, outline: "none", width: 140, marginRight: 6 }}
-            />
-            <Pill on={fl === "all" && !q} onClick={function () { setFl("all"); setQ(""); }}>全{DATA.length}社</Pill>
-            <Pill on={fl === "jp" && !q} onClick={function () { setFl("jp"); setQ(""); }}>国産</Pill>
-            <Pill on={fl === "gl" && !q} onClick={function () { setFl("gl"); setQ(""); }}>海外</Pill>
-            <Pill on={grpOpen} onClick={function () { setGrpOpen(!grpOpen); }}>グループ関係</Pill>
-          </div>
-          <BarChart data={filtered} dmax={dmax} grpOpen={grpOpen} grpData={grpData} />
-        </div>
-      )}
-
-      {/* Table Tab */}
-      {tab === "table" && (
-        <div>
-          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", marginBottom: 10 }}>
-            <input
-              placeholder="検索"
-              value={q}
-              onChange={function (e) { setQ(e.target.value); }}
-              style={{ padding: "5px 12px", border: "1px solid #ddd", borderRadius: 20, fontSize: 11, outline: "none", width: 140, marginRight: 6 }}
-            />
-            <Pill on={fl === "all" && !q} onClick={function () { setFl("all"); setQ(""); }}>全社</Pill>
-            <Pill on={fl === "jp" && !q} onClick={function () { setFl("jp"); setQ(""); }}>国産</Pill>
-            <Pill on={fl === "gl" && !q} onClick={function () { setFl("gl"); setQ(""); }}>海外</Pill>
-          </div>
-          <DataTable data={filtered} sortKey={sK} sortDir={sD} onSort={doSort} />
-        </div>
-      )}
-
-      {/* Map Tab */}
-      {tab === "map" && (
-        <ScatterMap />
-      )}
-
-      {/* Note */}
-      <div style={{ background: "#fafafa", borderLeft: "3px solid #ddd", padding: "7px 10px", marginTop: 14, fontSize: 10, color: "#777", lineHeight: 1.5 }}>
-        <b style={{ color: "#555" }}>「パス数」= </b>
-        ads.txtの各行（広告販売許可宣言）の本数。枠在庫数ではなく経路の本数。
-      </div>
-
-      {/* Footer */}
-      <div style={{ fontSize: 8, color: "#ccc", marginTop: 16, lineHeight: 1.7, borderTop: "1px solid #f0f0f0", paddingTop: 8 }}>
-        SPO = Cov(30%)+D率(35%)+(Scale×D率)(35%)。RESELLERは他SSPでも到達可能 → スケール寄与圧縮。マージン率/CPM含まず。
-        足切り: GumGum Outbrain Teads Geniee SSP MicroAd COMPASS AJA SSP Taboola Ogury FreakOut。
-        国産: fluct(adingo.jp)=CARTA HD | YieldOne(impact-ad.jp)=P1/DAC(博報堂DY) | adstir(ad-stir.com)=ユナイテッド | Ad Generation=Supership(KDDI)
-      </div>
-
-      {/* Site List Download */}
-      <div style={{ marginTop: 14, padding: "10px 12px", background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: "#374151" }}>📋 クロール対象サイト一覧</div>
-            <div style={{ fontSize: 9, color: "#9ca3af" }}>Tranco List .jp上位{SITES.length}ドメイン（ランク {SITES[0].rank}位〜{SITES[SITES.length - 1].rank}位）</div>
-          </div>
-          <button
-            onClick={function () {
-              var csv = "tranco_rank,domain,ads_txt_url\n";
-              SITES.forEach(function (s) {
-                csv += s.rank + "," + s.domain + ",https://" + s.domain + "/ads.txt\n";
-              });
-              var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-              var url = URL.createObjectURL(blob);
-              var a = document.createElement("a");
-              a.href = url;
-              a.download = "tranco_jp_top" + SITES.length + "_domains.csv";
-              a.click();
-              URL.revokeObjectURL(url);
-            }}
-            style={{
-              padding: "6px 14px", fontSize: 11, fontWeight: 600,
-              background: "#1a1a1a", color: "#fff", border: "none",
-              borderRadius: 6, cursor: "pointer", whiteSpace: "nowrap",
-            }}
-          >
-            CSV ダウンロード
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+  const labels=[];
+  for(const s of scData){
+    const cx=pa.l+((s.s-sMin)/sRange)*pw,cy=pa.t+(1-s.d/s.t)*ph,r=Math.max(5,Math.min(22,Math.sqrt(s.t/sMax)*22));
+    const cut=isCut(s),isM=mq(s);
+    const isPtnSC=isPartner(s);const isHBsc=CAT[s.n]==='hb';let fill=cut?'#ccc':isPtnSC?'#10b981':isHBsc?'#f59e0b':s.o==='JP'?'#e11d48':'#6366f1';
+    let op=hasQ?(isM?.8:.08):.55,sw=isPtnSC?2.5:1.2,sc=isPtnSC?'#10b981':'white';
+    if(hasQ&&isM){op=.8;sw=2.5;sc='#10b981';}
+    svg+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" opacity="${op}" stroke="${sc}" stroke-width="${sw}"/>`;
+    let lbl=s.brand;if(lbl.length>16)lbl=lbl.substring(0,14)+'…';
+    const showLabel=!hasQ||(hasQ&&isM);
+    if(showLabel){let lx=cx+r+4,anc='start';if(lx+70>pa.l+pw){lx=cx-r-4;anc='end';}
+    labels.push({x:lx,y:cy+3,t:lbl,a:anc,oy:cy,op:hasQ?(isM?1:.06):1,fw:isPtnSC?'700':'400',lc:isPtnSC?'#059669':isHBsc?'#b45309':s.o==='JP'?'#c1121f':'#555'});}
+  }
+  labels.sort((a,b)=>a.oy-b.oy);for(let i=1;i<labels.length;i++){if(Math.abs(labels[i].y-labels[i-1].y)<11)labels[i].y=labels[i-1].y+11;}
+  for(const lb of labels)svg+=`<text x="${lb.x}" y="${lb.y}" text-anchor="${lb.a}" fill="${lb.lc}" font-size="9" font-family="IBM Plex Mono" font-weight="${lb.fw}" opacity="${lb.op}">${lb.t}</text>`;
+  svg+='</svg>';el.innerHTML=svg;
 }
-
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+let sT=null;
+function doSearch(v){searchQ=v;clearTimeout(sT);sT=setTimeout(()=>render(),180);}
+function setF(f){filter=f;searchQ='';render();}
+function tgGrp(){showGrp=!showGrp;render();}
+function setSCF(f){scFilter=f;render();}
+function doSort(k){if(tblSort===k)tblDir*=-1;else{tblSort=k;tblDir=-1;}render();}
+render();window.addEventListener('resize',render);
 </script>
 </body>
 </html>
