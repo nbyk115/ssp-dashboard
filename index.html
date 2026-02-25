@@ -225,7 +225,7 @@ function render(){
   let data=searchQ?raw.filter(mq):filter==='all'?raw:filter==='jp'?raw.filter(x=>x.o==='JP'):raw.filter(x=>x.o!=='JP');
   const sorted=[...data].sort((a,b)=>{if(tblSort==='spo'){const sa=spoScore(a)||hbScore(a)||0,sb=spoScore(b)||hbScore(b)||0;return tblDir*(sb-sa);}if(tblSort==='dpct')return tblDir*((b.d/b.t)-(a.d/a.t));return tblDir*((b[tblSort]||0)-(a[tblSort]||0));});
   const dmax=Math.max(...sorted.map(x=>x.t),1),hasQ=!!searchQ;
-  let scData=raw.filter(x=>!isCut(x)||isPartner(x));if(scFilter==='jp')scData=scData.filter(x=>x.o==='JP');else if(scFilter==='gl')scData=scData.filter(x=>x.o!=='JP');
+  let scData=raw.filter(x=>(!isCut(x)||isPartner(x))&&x.n!=='inmobi.com');if(scFilter==='jp')scData=scData.filter(x=>x.o==='JP');else if(scFilter==='gl')scData=scData.filter(x=>x.o!=='JP');
   const qualified=scData.filter(x=>CAT[x.n]==='ssp'&&x.t>=TH),scByScore=[...qualified].sort((a,b)=>spoScore(b)-spoScore(a));
   const top5ids=new Set(),top3ids=new Set();
   let gt={};if(showGrp){for(let[gn,gv]of Object.entries(grps)){let ms=raw.filter(x=>gv.m.includes(x.n));if(ms.length>=2)gt[gn]={d:ms.reduce((s,m)=>s+m.d,0),r:ms.reduce((s,m)=>s+m.r,0),t:ms.reduce((s,m)=>s+m.t,0),s:Math.max(...ms.map(m=>m.s)),cnt:ms.length,ms:ms.map(m=>`${m.brand} (${m.n})`)};}}
@@ -248,7 +248,7 @@ function render(){
     </div>
     <div class="sc-section">
       <h2>ポジショニングマップ</h2>
-      <div class="desc">横軸: 掲載サイト数(115中)。縦軸: DIRECT率。●サイズ: パス数。緑=推奨パートナー。。破線枠=推奨ゾーン。足切りSSPは非表示（パートナー除く）。</div>
+      <div class="desc">横軸: 掲載サイト数(115中)。縦軸: DIRECT率。●サイズ: パス数。緑=推奨パートナー。破線枠=推奨ゾーン。足切りSSPは非表示（パートナー除く）。InMobi（モバイル特化）はマップ非表示。</div>
       <div class="sc-ctrl">
         <button class="pill ${scFilter==='all'?'on':''}" onclick="setSCF('all')">全SSP</button>
         <button class="pill ${scFilter==='jp'?'on':''}" onclick="setSCF('jp')">国産のみ</button>
