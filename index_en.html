@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japan ads.txt SSP Presence Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}html,body{background:#fff;margin:0;}
+body{color:#1a1a1a;font-family:'Noto Sans JP',sans-serif;line-height:1.65;font-size:14px;}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 20px 64px;background:#fff;}
+.hd{margin-bottom:24px;border-bottom:2px solid #1a1a1a;padding-bottom:12px;}.hd h1{font-size:1.35rem;font-weight:700;}.hd p{font-size:.76rem;color:#777;margin-top:3px;}
+.meta-row{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;font-size:.68rem;color:#aaa;}.meta-row span{background:#f7f7f7;padding:2px 8px;border-radius:4px;}
+.insight{border-radius:8px;padding:16px 18px;margin-bottom:16px;font-size:.78rem;line-height:1.8;}
+.insight-blue{background:#f0f7ff;border:1px solid #bfdbfe;color:#1e40af;}.insight-green{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;}.insight-amber{background:#fffbeb;border:1px solid #fde68a;color:#92400e;}
+.insight h3{font-size:.88rem;font-weight:700;margin-bottom:6px;}
+.score-row{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:.78rem;}
+.rank-num{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:1rem;width:24px;text-align:right;}.score-name{font-weight:600;min-width:150px;}
+.score-bar-bg{flex:1;height:8px;background:rgba(0,0,0,.06);border-radius:4px;overflow:hidden;max-width:180px;}.score-bar-fill{height:100%;border-radius:4px;}
+.score-val{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:.76rem;width:40px;text-align:right;}.score-detail{font-size:.62rem;color:inherit;opacity:.5;font-family:'IBM Plex Mono',monospace;}
+.rule{font-size:.68rem;color:inherit;opacity:.6;margin-top:8px;line-height:1.7;}.jp-flag{color:#e11d48;}
+.note{background:#fafafa;border-left:3px solid #ddd;padding:10px 14px;margin-bottom:20px;font-size:.74rem;color:#777;line-height:1.6;}.note strong{color:#555;}
+.ctrl{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.pill{padding:5px 13px;border:1px solid #ddd;border-radius:20px;font-size:.71rem;cursor:pointer;background:#fff;color:#999;font-family:'Noto Sans JP',sans-serif;transition:all .15s;white-space:nowrap;}.pill:hover{border-color:#aaa;color:#666;}.pill.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
+.sep{width:1px;height:16px;background:#e5e5e5;margin:0 3px;}
+.search{padding:5px 12px;border:1px solid #ddd;border-radius:20px;font-size:.72rem;font-family:'Noto Sans JP',sans-serif;outline:none;width:200px;color:#333;transition:border-color .15s;}.search:focus{border-color:#888;box-shadow:0 0 0 2px rgba(59,130,246,.08);}.search::placeholder{color:#ccc;}
+.hit-count{font-size:.64rem;color:#3b82f6;font-weight:600;margin-left:2px;}
+.legend{display:flex;gap:16px;margin-bottom:8px;font-size:.68rem;color:#aaa;}.legend span{display:flex;align-items:center;gap:4px;}.legend .ld{width:10px;height:10px;border-radius:2px;}
+.vol-row{display:grid;grid-template-columns:175px 1fr 60px 80px;gap:6px;align-items:center;padding:4px 0;border-bottom:1px solid #f5f5f5;}.vol-row:hover{background:#fefefe;}
+.vol-name{font-size:.76rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.vol-name .jp{color:#e11d48;}.vol-name .gl{color:#333;}.vol-name .dom{font-size:.58rem;color:#ccc;font-weight:400;display:block;font-family:'IBM Plex Mono',monospace;}.vol-name .co{font-size:.56rem;color:#bbb;font-weight:400;}
+.bar-wrap{position:relative;height:20px;}.bar-inner{display:flex;height:100%;border-radius:3px;overflow:hidden;position:absolute;left:0;top:0;}.bar-inner .bd{background:#3b82f6;}.bar-inner .br{background:#f97316;}
+.vol-total{font-size:.76rem;font-family:'IBM Plex Mono',monospace;color:#555;text-align:right;font-weight:600;}
+.ratio-label{font-size:.74rem;font-family:'IBM Plex Mono',monospace;display:flex;gap:2px;align-items:center;justify-content:flex-end;}.ratio-label .d-num{color:#3b82f6;font-weight:600;}.ratio-label .sep-slash{color:#ddd;}.ratio-label .r-num{color:#f97316;font-weight:600;}
+mark{background:#fde68a;color:#1a1a1a;border-radius:2px;padding:0 1px;}
+.vol-header{display:grid;grid-template-columns:175px 1fr 60px 80px;gap:6px;padding:2px 0 6px;font-size:.6rem;color:#bbb;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #e5e5e5;margin-bottom:2px;}.vol-header span:nth-child(3){text-align:right;}.vol-header span:nth-child(4){text-align:right;}
+.gcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;margin-bottom:16px;}
+.gc{border:1px solid #e5e5e5;border-radius:7px;padding:10px 12px;background:#fff;}.gc .gn{font-weight:700;font-size:.82rem;display:flex;align-items:center;gap:4px;margin-bottom:3px;}.gc .gn .dot{width:6px;height:6px;border-radius:2px;}.gc .gd{font-size:.68rem;color:#888;line-height:1.5;}.gc .gd b{color:#444;font-family:'IBM Plex Mono',monospace;font-weight:500;}.gc .gm{font-size:.6rem;color:#bbb;margin-top:3px;font-family:'IBM Plex Mono',monospace;}
+.sc-section{margin-bottom:32px;}.sc-section h2{font-size:1rem;font-weight:700;margin-bottom:3px;}.sc-section .desc{font-size:.72rem;color:#999;margin-bottom:8px;}
+.sc-ctrl{display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap;font-size:.7rem;}
+.sc-box{border:1px solid #e5e5e5;border-radius:8px;overflow:hidden;background:#fff;}
+.sc-legend{display:flex;gap:14px;padding:7px 12px;font-size:.63rem;color:#bbb;border-top:1px solid #f0f0f0;flex-wrap:wrap;}.sc-legend span{display:flex;align-items:center;gap:3px;}.sc-legend .ld{width:6px;height:6px;border-radius:50%;}
+.tbl-section h2{font-size:1rem;font-weight:700;margin-bottom:10px;}.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:.6rem;color:#aaa;text-transform:uppercase;letter-spacing:.04em;padding:6px 7px;border-bottom:2px solid #e5e5e5;white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0;background:#fff;z-index:2;}
+th:hover{color:#666;}th.act{color:#1a1a1a;}th.r{text-align:right;}th.c{text-align:center;}
+td{padding:5px 7px;border-bottom:1px solid #f5f5f5;font-size:.76rem;}tr:hover td{background:#fcfcfc;}
+td.r{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:.72rem;}td.c{text-align:center;}td.nm{font-weight:600;white-space:nowrap;}
+.mini-bar{display:flex;height:10px;border-radius:2px;overflow:hidden;background:#f0f0f0;}.mini-bar .bd{background:#3b82f6;height:100%;}.mini-bar .br{background:#f97316;height:100%;}
+.otag{font-size:.54rem;padding:1px 4px;border-radius:3px;margin-left:2px;}.otag-JP{background:#fff1f2;color:#e11d48;}.otag-US{background:#eef2ff;color:#4f46e5;}.otag-FR{background:#f0fdf4;color:#16a34a;}.otag-UK{background:#fefce8;color:#ca8a04;}.otag-CA{background:#faf5ff;color:#9333ea;}.otag-o{background:#f7f7f7;color:#999;}
+.cut-badge{font-size:.54rem;color:#999;background:#f5f5f5;padding:1px 4px;border-radius:3px;margin-left:3px;}
+.ft{font-size:.6rem;color:#ccc;margin-top:24px;line-height:1.8;border-top:1px solid #f0f0f0;padding-top:12px;}
+.partner-badge{display:inline-block;font-size:.52rem;background:linear-gradient(135deg,#10b981,#059669);color:white;padding:1px 5px;border-radius:3px;margin-left:5px;font-weight:600;letter-spacing:.3px;vertical-align:middle;}.partner-row{background:linear-gradient(90deg,rgba(16,185,129,.04),transparent)!important;border-left:3px solid #10b981!important;}
+.cat-tag{display:inline-block;font-size:.48rem;padding:1px 4px;border-radius:2px;margin-left:4px;font-weight:600;letter-spacing:.2px;vertical-align:middle;border:1px solid;}.cat-ssp{color:#6366f1;border-color:#c7d2fe;background:#eef2ff;}.cat-hb{color:#d97706;border-color:#fde68a;background:#fffbeb;}.cat-other{color:#999;border-color:#e5e5e5;background:#fafafa;}
+.tooltip{position:fixed;max-width:340px;background:#1a1a1a;color:#eee;padding:10px 14px;border-radius:8px;font-size:.72rem;line-height:1.6;pointer-events:none;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.25);opacity:0;transition:opacity .15s;}.tooltip.vis{opacity:1;}.tooltip .tt-name{font-weight:700;font-size:.82rem;margin-bottom:3px;color:#fff;}.tooltip .tt-meta{font-size:.64rem;color:#999;margin-bottom:4px;}.tooltip .tt-desc{color:#ccc;}
+.lang-toggle{position:fixed;top:12px;right:16px;z-index:200;display:flex;gap:0;border-radius:6px;overflow:hidden;border:1px solid #ddd;font-size:.7rem;font-family:'IBM Plex Mono',monospace;box-shadow:0 1px 4px rgba(0,0,0,.08);}.lang-toggle a{padding:5px 12px;text-decoration:none;color:#888;background:#fff;transition:all .15s;}.lang-toggle a:hover{background:#f5f5f5;color:#333;}.lang-toggle a.active{background:#1a1a1a;color:#fff;}
+@media(max-width:768px){.vol-row,.vol-header{grid-template-columns:130px 1fr 50px 70px;}}
+</style>
+</head>
+<body>
+<div class="lang-toggle"><a href="index.html">JA</a><a class="active" href="index_en.html">EN</a></div>
+<div class="wrap">
+  <div class="hd">
+    <h1>Japan ads.txt SSP Presence Analysis</h1>
+    <p>Analyzing ads.txt entries from major Japanese publishers to visualize supply path structure and scale of key SSPs in the Japan market</p>
+    <div class="meta-row"><span>ads.txt collected from 115 corporate media sites filtered from top 200 by Potential Impressions</span><span>14 SSPs analyzed (excl. Google AdX, APS, Criteo, Outbrain/Taboola, Hakuhodo DY group, FreakOut)</span><span>2026-02-18 crawl / imp 2/10–16</span></div>
+  </div>
+  <div class="insight insight-amber">
+    <h3>Data Sources & Exclusions</h3>
+    <div style="margin-bottom:8px"><strong>📊 Data Source</strong></div>
+    <ul style="margin:0 0 10px 16px;padding:0;list-style:disc;line-height:1.7;font-size:.72rem">
+      <li>Japan sites ranked by Potential Impressions (est. pageviews), <strong>top 200 sites</strong></li>
+      <li>Filtered to <strong>115 corporate-operated editorial media sites</strong> for ads.txt collection</li>
+      <li>Primarily newspapers, TV networks, publisher web media, and major portals</li>
+      <li>Impression period: Feb 10–16, 2026</li>
+    </ul>
+    <div style="margin-bottom:8px"><strong>🔍 Site Filtering Criteria</strong></div>
+    <ul style="margin:0 0 10px 16px;padding:0;list-style:disc;line-height:1.7;font-size:.72rem">
+      <li>No industry-standard definition of "premium" exists</li>
+      <li>For SSP evaluation, inventory must be <strong>corporate-operated × editorial content × brand-safe</strong></li>
+      <li>UGC/personal blogs, game wikis, suspected MFA sites, and tool sites excluded</li>
+      <li>Including these would inflate reseller paths and distort SSP evaluation</li>
+    </ul>
+    <div style="margin-bottom:8px"><strong>🚫 SSP Exclusions (5)</strong></div>
+    <ul style="margin:0 0 10px 16px;padding:0;list-style:disc;line-height:1.7;font-size:.72rem">
+      <li><strong>Criteo</strong> — Own DSP (Commerce Grid) demand dominates. Limited benefit buying through Criteo via TTD/DV360<br><span style="color:#999;font-size:.62rem">Ref: 1,554 paths / D-rate 48% / 110 sites</span></li>
+      <li><strong>Outbrain, Taboola</strong> — Native ad networks. Closed recommendation demand structure; not comparable with open auction SSPs<br><span style="color:#999;font-size:.62rem">Ref: Outbrain 890 paths/D-rate 36%, Taboola 335 paths/D-rate 84%</span></li>
+      <li><strong>YieldOne</strong>(impact-ad.jp)— Hakuhodo DY group SSP. Structurally high D-rate due to in-group media connections. Not recommended from Dentsu group perspective<br><span style="color:#999;font-size:.62rem">Ref: 2,143 paths / D-rate 20% / 112 sites</span></li>
+    </ul>
+    <div style="margin-bottom:8px"><strong>📋 About ADNW / HB Wrappers</strong></div>
+    <ul style="margin:0 0 10px 16px;padding:0;list-style:disc;line-height:1.7;font-size:.72rem">
+      <li><strong>ADNW (Ad Network)</strong> = Network bundling ad inventory from multiple media for sale. Unlike SSPs, not typically subject to individual path selection (SPO) from DSPs</li>
+      <li><strong>HB Wrapper</strong> = Platform managing connections to multiple SSPs on the publisher side (Header Bidding Wrapper). Not directly buyable from DSPs</li>
+      <li>This analysis evaluates SSPs from a DSP perspective; ADNW-type (AdStir, Ad Generation, i-mobile, AJA SSP, etc.) and HB wrapper specialists (FLUX, FourM, etc.) are excluded</li>
+      <li>Note: <strong>Magnite, fluct, and Geniee</strong> also operate HB wrapper businesses but are classified as SSPs since that is their primary function</li>
+    </ul>
+    <div style="margin-bottom:8px"><strong>⚠️ Other Exclusions</strong></div>
+    <ul style="margin:0 0 6px 16px;padding:0;list-style:disc;line-height:1.7;font-size:.72rem">
+      <li><strong>Google AdX</strong>(google.com)— 10,311 paths / all 115 sites. Incomparable scale; reported separately</li>
+      <li><strong>Amazon APS</strong>(TAM/UAM)— Excluded due to structural advantage from Amazon DSP demand</li>
+      <li><strong>FreakOut</strong>(fout.jp)— DSP specialist. Minimal SSP function (12 paths)</li>
+    </ul>
+    <div style="font-size:.6rem;color:#999;margin-top:4px">* adingo.jp is the ads.txt domain for fluct (CARTA HD / Dentsu Group). Not DAC.</div>
+  </div>
+  <div class="insight insight-blue" id="spo-box"></div>
+  <div class="insight insight-green" id="jp-box"></div>
+  <div class="note">
+    <strong>"Path count" means:</strong> The number of authorization lines in each site's ads.txt (ad sales authorization list) that say <strong>"OK to sell ads via this SSP."</strong> Each site has multiple accounts/paths, so totals across 115 sites reach thousands to tens of thousands. More paths = more sites authorizing that SSP through more routes. This is not request count or impression count.
+  </div>
+  <div id="app"></div>
+  <div class="tooltip" id="tip"><div class="tt-name"></div><div class="tt-meta"></div><div class="tt-desc"></div></div>
+</div>
+<script>
+const TH=1000,TS=115,fmt=n=>n.toLocaleString();
+const PARTNERS={"media.net":{reason:"Contextual SSP. Direct buying via HB from TTD/DV360. D-rate 38% is highest among global SSPs. Strong in cookieless environments with proprietary context matching tech."},"adingo.jp":{reason:"Dentsu Group (CARTA HD) SSP. Deployed on 114 premium domestic sites, D-rate 38.6%. Main fluct domain on ads.txt. Strength in Japan-specific operational support, reporting, and deal design."},"ogury.com":{reason:"Mobile-focused SSP differentiated by consent-based advertising. Present on 110 sites. Cookieless ad solution addressing privacy regulation strengthening."}};
+// Category: "ssp" = SSP/Exchange
+const CAT={
+  "pubmatic.com":"ssp","rubiconproject.com":"ssp","openx.com":"ssp","indexexchange.com":"ssp",
+  "smartadserver.com":"ssp","video.unrulymedia.com":"ssp","inmobi.com":"ssp","media.net":"ssp",
+  "gumgum.com":"ssp","teads.tv":"ssp","microad.co.jp":"ssp","ogury.com":"ssp","genieesspv.jp":"ssp",
+  "adingo.jp":"ssp",
+};
+const COMPANY={
+  "pubmatic.com":"PubMatic, Inc. (US, independent)",
+  "rubiconproject.com":"Magnite, Inc.(US, independent / CTV strength)",
+  "openx.com":"OpenX Technologies, Inc. (US, independent)",
+  "indexexchange.com":"Index Exchange, Inc. (CA, independent)",
+  "smartadserver.com":"Equativ(FR, formerly SmartAdServer + Sharethrough merger)",
+  "video.unrulymedia.com":"Nexxen(formerly Unruly / Tremor International)",
+  "inmobi.com":"InMobi Pte.(IN, mobile-focused)",
+  "media.net":"Media.net(UAE / Yahoo! network)",
+  "adingo.jp":"fluct, Inc. (CARTA HD / Dentsu Group)",
+  "gumgum.com":"GumGum, Inc.(US, contextual advertising)",
+  "teads.tv":"Teads(FR, Altice subsidiary / in-read video)",
+  "genieesspv.jp":"Geniee, Inc. (TSE Growth)",
+  "microad.co.jp":"MicroAd, Inc. (TSE Growth)",
+  "ogury.com":"Ogury Ltd.(FR, mobile-focused)",
+};
+const CAT_LABEL={"ssp":"SSP","other":"Ref"};
+const CAT_COLOR={"ssp":"#6366f1","other":"#aaa"};
+const sspDesc={
+  "pubmatic.com":"One of the largest global SSPs. Standard connection from TTD/DV360/Amazon DSP. No need to specifically recommend (available by default from any DSP). In Japan, D-rate 7% = almost all paths are reseller, with massive inventory overlap with other SSPs.",
+  "rubiconproject.com":"Formerly Rubicon Project → Magnite. Strength in CTV/OTT. Standard connection from TTD/DV360. In Japan, D-rate 11% = reseller-dominant, overlapping inventory with PubMatic, etc. Differentiated in CTV but limited path advantage on web.",
+  "openx.com":"Established SSP. Standard connection from TTD/DV360. In Japan, D-rate 6% = almost all paths via reseller. Strength in OpenAudience (proprietary ID), but difficult to differentiate from other major SSPs in web path structure.",
+  "indexexchange.com":"Canada-based SSP/Exchange. Transparency-focused path design. Standard connection from TTD/DV360. In Japan, D-rate 9% = reseller-dominant. Known for path transparency, but inventory reach largely overlaps with PubMatic, etc.",
+  "smartadserver.com":"French Equativ (fmr. SmartAdServer). Strong with European publishers. Curation-type SSP.",
+  "video.unrulymedia.com":"Formerly Unruly → Nexxen. Started as video SSP, expanded to CTV/OTT.",
+  "inmobi.com":"India-based mobile-focused SSP. Strong in app inventory, also operates in mobile web in Japan.",
+  "media.net":"SSP with Yahoo!/Bing context matching technology. Steadily expanding share as HB player. D-rate 38% is high among global SSPs.",
+  "gumgum.com":"SSP specializing in contextual advertising. AI-analyzes page content for ad delivery. Rising attention for cookieless compatibility. ⚠ CPM higher than other SSPs (contextual targeting premium). Suited for branding campaigns.",
+  "teads.tv":"French in-read video SSP. Differentiated by in-article video ad format. DIRECT connection to 110/115 sites (D-rate 59%). Low path count but 94% site coverage. ⚠ CPM higher than other SSPs (video format characteristics). Caution if prioritizing cost efficiency.",
+  "adingo.jp":"fluct (CARTA HD / Dentsu Group). One of Japan's largest SSPs. Deployed on 114 sites, D-rate 38.6% on par with Media.net. adingo.jp is fluct's main domain on ads.txt. Differentiated by Japan-specific operational support, deal design, and Japanese reporting.",
+  "genieesspv.jp":"Geniee. Domestic SSP. Offers proprietary HB solution. Widely adopted by small-to-mid-size media.",
+  "microad.co.jp":"MicroAd. Domestic SSP/DMP. Known for UNIVERSE data integration. Small scale but high direct contract rate.",
+  "ogury.com":"French mobile-focused SSP. Advocates consent-based advertising with strong privacy regulation readiness. Present on 110/115 sites. D-rate 37%.",
+};
+const raw=[
+  {n:"pubmatic.com",d:1556,r:18126,t:19682,s:115,brand:"PubMatic",co:"",o:"US"},
+  {n:"rubiconproject.com",d:1275,r:12039,t:13314,s:115,brand:"Magnite",co:"fmr. Rubicon Project",o:"US"},
+  {n:"openx.com",d:624,r:9029,t:9653,s:115,brand:"OpenX",co:"",o:"US"},
+  {n:"indexexchange.com",d:692,r:6481,t:7173,s:115,brand:"Index Exchange",co:"",o:"CA"},
+  {n:"smartadserver.com",d:776,r:5306,t:6082,s:114,brand:"Equativ",co:"fmr. SmartAdServer",o:"FR"},
+  {n:"video.unrulymedia.com",d:670,r:3389,t:4059,s:111,brand:"Nexxen",co:"fmr. Unruly",o:"UK"},
+  {n:"inmobi.com",d:270,r:1441,t:1711,s:105,brand:"InMobi",co:"Mobile SSP",o:"IN"},
+  {n:"media.net",d:589,r:961,t:1550,s:110,brand:"Media.net",co:"Contextual SSP",o:"AE"},
+  {n:"adingo.jp",d:686,r:1092,t:1778,s:114,brand:"fluct",co:"CARTA HD / Dentsu Group",o:"JP"},
+  {n:"gumgum.com",d:221,r:818,t:1039,s:112,brand:"GumGum",co:"Contextual Ad (SSP)",o:"US"},
+  {n:"teads.tv",d:387,r:273,t:660,s:110,brand:"Teads",co:"In-read Video (SSP)",o:"FR"},
+  {n:"genieesspv.jp",d:208,r:255,t:463,s:94,brand:"Geniee SSP",co:"SSP",o:"JP"},
+  {n:"microad.co.jp",d:210,r:218,t:428,s:107,brand:"MicroAd COMPASS",co:"SSP/DMP",o:"JP"},
+  {n:"ogury.com",d:109,r:186,t:295,s:110,brand:"Ogury",co:"Mobile-focused (SSP)",o:"FR"},
+];
+const grps={};
+const maxT=Math.max(...raw.filter(x=>x.t>=TH).map(x=>x.t));
+const tipEl=document.getElementById('tip');
+function showTip(e,s){
+  const desc=sspDesc[s.n]||'';if(!desc)return;
+  const dp=(s.d/s.t*100).toFixed(0),sc=spoScore(s);
+  tipEl.querySelector('.tt-name').textContent=s.brand+(s.co?' — '+s.co:'');
+  tipEl.querySelector('.tt-meta').textContent=`${fmt(s.t)}paths / D${dp}% / ${s.s}sites`+(sc!==null?' / Score '+sc.toFixed(1):'');
+  const pInfo=PARTNERS[s.n];tipEl.querySelector('.tt-desc').textContent=pInfo?'[Recommended Partner] '+pInfo.reason+'\n\n'+desc:desc;
+  tipEl.classList.add('vis');
+  const x=Math.min(e.clientX+12,window.innerWidth-360),y=e.clientY+16;
+  tipEl.style.left=x+'px';tipEl.style.top=y+'px';
+}
+function moveTip(e){
+  const x=Math.min(e.clientX+12,window.innerWidth-360),y=e.clientY+16;
+  tipEl.style.left=x+'px';tipEl.style.top=y+'px';
+}
+function hideTip(){tipEl.classList.remove('vis');}
+// SSP Score = Cov×30% + D-rate×35% + (Scale × D-rate/100)×35%  SSP category only
+
+function spoScore(s){
+  if(CAT[s.n]==='hb') return null;
+  if(s.t<TH)return null;
+  const dr=s.d/s.t*100, cov=s.s/TS*100, vol=Math.log(s.t)/Math.log(maxT)*100;
+  return cov*.30 + dr*.35 + (vol*(dr/100))*.35;
+}
+function hbScore(s){
+  if(CAT[s.n]!=='hb') return null;
+  return s.s/TS*100;
+}
+function isCut(s){return CAT[s.n]==='ssp' && s.t<TH;}
+function isPartner(s){return !!PARTNERS[s.n];}
+function catTag(s){const c=CAT[s.n]||'other';return '<span class="cat-tag cat-'+c+'">'+CAT_LABEL[c]+'</span>';}
+
+function renderInsightBoxes(){
+  const sspOnly=raw.filter(x=>CAT[x.n]==='ssp'&&x.t>=TH).map(s=>({...s,spo:spoScore(s)})).sort((a,b)=>b.spo-a.spo);
+  const hbOnly=raw.filter(x=>CAT[x.n]==='hb').map(s=>({...s,hbs:hbScore(s)})).sort((a,b)=>b.hbs-a.hbs);
+  const jp=sspOnly.filter(x=>x.o==='JP'),top5=sspOnly.slice(0,5),mx=top5[0]?top5[0].spo:1;
+  const cutList=raw.filter(x=>CAT[x.n]==='ssp'&&x.t<TH);
+  const row=(i,s,color)=>`<div class="score-row"><span class="rank-num">${i+1}</span><span class="score-name">${s.o==='JP'?'<span class="jp-flag">🇯🇵</span> ':''}<span title="${COMPANY[s.n]||''}" style="cursor:help">${s.brand}</span>${PARTNERS[s.n]?' <span class="partner-badge">Recommended</span>':''}</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:${Math.round(s.spo/mx*100)}%;background:${color}"></div></div><span class="score-val">${s.spo.toFixed(1)}</span><span class="score-detail">D${(s.d/s.t*100).toFixed(0)}% Cov${(s.s/TS*100).toFixed(0)}% ${fmt(s.t)}paths</span></div>`;
+  const hbRow=(i,s)=>`<div class="score-row"><span class="rank-num">${i+1}</span><span class="score-name">${s.o==='JP'?'<span class="jp-flag">🇯🇵</span> ':''}<span title="${COMPANY[s.n]||''}" style="cursor:help">${s.brand}</span>${PARTNERS[s.n]?' <span class="partner-badge">Recommended</span>':''}</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:${Math.round(s.hbs)}%;background:#f59e0b"></div></div><span class="score-val">Adopt${Math.round(s.hbs)}%</span><span class="score-detail">${fmt(s.t)}paths D${(s.d/s.t*100).toFixed(0)}%</span></div>`;
+  document.getElementById('spo-box').innerHTML=`
+    <h3>🏆 SSP Evaluation Score TOP 5</h3>
+    ${top5.map((s,i)=>row(i,s,'#6366f1')).join('')}
+    <div class="rule">SSP = Player directly connected to publishers, supplying impressions to DSPs. Evaluated by SSP Score (Coverage 30% + DIRECT rate 35% + Scale×D-rate 35%). Quantifies the 'directness' and 'reach' of ad delivery paths.<br><br><strong>Why aren't the top SSPs (PubMatic, etc.) 'Recommended'?</strong> PubMatic, Magnite, OpenX, and Index Exchange are <strong>standard connections on TTD/DV360/Amazon DSP</strong>. They're used by default without need for recommendation. In Japan, D-rate is 6–11% = almost entirely reseller paths, with massive inventory overlap across SSPs making path differentiation difficult.<br>Recommended Partners (Media.net / fluct / Ogury) are SSPs with unique value not available through standard connections.<br><br><strong>⚠ About Teads:</strong> 660 paths, below threshold (under 1,000 paths), but D-rate 59% and site coverage 96% (110/115 sites). Low path count due to in-read video format specialization. Direct contract ratio is among the highest of all SSPs. However, CPM is higher than other SSPs (video premium). Caution if prioritizing cost efficiency.</div>`;
+  document.getElementById('jp-box').innerHTML='';
+
+}
+renderInsightBoxes();
+
+let filter='all',searchQ='',showGrp=false,scFilter='all',tblSort='t',tblDir=-1;
+function mq(s){if(!searchQ)return true;const q=searchQ.toLowerCase();return s.n.toLowerCase().includes(q)||s.brand.toLowerCase().includes(q)||(s.co&&s.co.toLowerCase().includes(q));}
+function hlT(t){if(!searchQ)return t;const q=searchQ.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');return t.replace(new RegExp('('+q+')','gi'),'<mark>$1</mark>');}
+
+function render(){
+  let data=searchQ?raw.filter(mq):filter==='all'?raw:filter==='jp'?raw.filter(x=>x.o==='JP'):raw.filter(x=>x.o!=='JP');
+  const sorted=[...data].sort((a,b)=>{if(tblSort==='spo'){const sa=spoScore(a)||hbScore(a)||0,sb=spoScore(b)||hbScore(b)||0;return tblDir*(sb-sa);}if(tblSort==='dpct')return tblDir*((b.d/b.t)-(a.d/a.t));return tblDir*((b[tblSort]||0)-(a[tblSort]||0));});
+  const dmax=Math.max(...sorted.map(x=>x.t),1),hasQ=!!searchQ;
+  let scData=raw.filter(x=>(!isCut(x)||isPartner(x))&&x.n!=='inmobi.com');if(scFilter==='jp')scData=scData.filter(x=>x.o==='JP');else if(scFilter==='gl')scData=scData.filter(x=>x.o!=='JP');
+  const qualified=scData.filter(x=>CAT[x.n]==='ssp'&&x.t>=TH),scByScore=[...qualified].sort((a,b)=>spoScore(b)-spoScore(a));
+  const top5ids=new Set(),top3ids=new Set();
+  let gt={};if(showGrp){for(let[gn,gv]of Object.entries(grps)){let ms=raw.filter(x=>gv.m.includes(x.n));if(ms.length>=2)gt[gn]={d:ms.reduce((s,m)=>s+m.d,0),r:ms.reduce((s,m)=>s+m.r,0),t:ms.reduce((s,m)=>s+m.t,0),s:Math.max(...ms.map(m=>m.s)),cnt:ms.length,ms:ms.map(m=>`${m.brand} (${m.n})`)};}}
+  const th=(k,l,c='')=>`<th class="${c} ${tblSort===k?'act':''}" onclick="doSort('${k}')">${l}${tblSort===k?(tblDir===-1?' ↓':' ↑'):''}</th>`;
+  document.getElementById('app').innerHTML=`
+    <div class="ctrl">
+      <input type="text" class="search" id="si" placeholder="Search (all ${raw.length})" oninput="doSearch(this.value)"/>${hasQ?`<span class="hit-count">${sorted.length} matches</span>`:''}<div class="sep"></div>
+      <button class="pill ${filter==='all'&&!hasQ?'on':''}" onclick="setF('all')">All (${raw.length})</button>
+      <button class="pill ${filter==='jp'&&!hasQ?'on':''}" onclick="setF('jp')">Domestic (${raw.filter(x=>x.o==='JP').length})</button>
+      <button class="pill ${filter==='gl'&&!hasQ?'on':''}" onclick="setF('gl')">Global (${raw.filter(x=>x.o!=='JP').length})</button>
+      <div class="sep"></div><button class="pill ${showGrp?'on':''}" onclick="tgGrp()">Group Totals</button>
+    </div>
+    ${showGrp?renderGC(gt):''}
+    <div style="margin-bottom:32px;">
+      <h2 style="font-size:1.05rem;font-weight:700;margin-bottom:10px;">Supply Path Count × DIRECT / RESELLER Composition</h2>
+      <div class="legend"><span><div class="ld" style="background:#3b82f6"></div>DIRECT</span><span><div class="ld" style="background:#f97316"></div>RESELLER</span></div>
+      <div class="vol-header"><span>SSP Name</span><span>Composition</span><span>Paths</span><span>D% / R%</span></div>
+      ${sorted.map(s=>{const dp=s.d/s.t*100,rp=s.r/s.t*100,w=s.t/dmax*100,isJP=s.o==='JP',cut=isCut(s);const bT=hasQ?hlT(s.brand):s.brand,dT=hasQ?hlT(s.n):s.n;const coT=s.co?`<span class="co"> ${s.co}</span>`:'';const dn=s.n;const isPtn=isPartner(s);
+      return`<div class="vol-row${isPtn?' partner-row':''}" onmouseenter="showTip(event,raw.find(x=>x.n==='${dn}'))" onmousemove="moveTip(event)" onmouseleave="hideTip()"><div class="vol-name"><span class="${isJP?'jp':'gl'}">${bT}</span>${isPtn?'<span class="partner-badge">Recommended</span>':''}${catTag(s)}${coT}<span class="dom">${dT}</span></div><div class="bar-wrap"><div class="bar-inner" style="width:${Math.max(w,2)}%;opacity:${cut?.4:1}"><div class="bd" style="width:${dp}%;height:100%"></div><div class="br" style="width:${rp}%;height:100%"></div></div></div><div class="vol-total" style="${cut?'color:#ccc':''}">${fmt(s.t)}</div><div class="ratio-label"><span class="d-num" style="${cut?'color:#93c5fd':''}">${dp.toFixed(0)}%</span><span class="sep-slash">/</span><span class="r-num" style="${cut?'color:#fdba74':''}">${rp.toFixed(0)}%</span></div></div>`;}).join('')}
+    </div>
+    <div class="sc-section">
+      <h2>Positioning Map</h2>
+      <div class="desc">X-axis: Sites present (of 115). Y-axis: DIRECT rate. Circle size: Path count. Green = Recommended Partner. Dashed box = Recommended zone. Below-threshold SSPs hidden (except Partners).</div>
+      <div class="sc-ctrl">
+        <button class="pill ${scFilter==='all'?'on':''}" onclick="setSCF('all')">All SSPs</button>
+        <button class="pill ${scFilter==='jp'?'on':''}" onclick="setSCF('jp')">Domestic Only</button>
+        <button class="pill ${scFilter==='gl'?'on':''}" onclick="setSCF('gl')">Global Only</button>
+      </div>
+      <div class="sc-box"><div id="sc" style="width:100%;height:420px;"></div>
+      <div class="sc-legend"><span><div class="ld" style="background:#10b981"></div>Recommended</span><span><div class="ld" style="background:#6366f1"></div>SSP (Global)</span><span><div class="ld" style="background:#e11d48"></div>SSP (Domestic)</span></div></div>
+    </div>
+    <div class="tbl-section"><h2>Detail Table</h2><div class="tw"><table><thead><tr>
+      ${th('t','#','c')}<th>SSP Name</th><th>ads.txt</th>${th('d','Direct','r')}${th('r','Reseller','r')}${th('t','Paths','r')}${th('dpct','D/R Ratio')}${th('spo','Score','r')}<th class="c">Sites<br><span style="font-size:.5rem;color:#ccc">/ ${TS}</span></th>
+    </tr></thead><tbody>
+    ${sorted.map((s,i)=>{const dp=s.d/s.t*100,rp=s.r/s.t*100,sc=spoScore(s),hb=hbScore(s),cut=isCut(s),oc='otag-'+(['JP','US','FR','UK','CA'].includes(s.o)?s.o:'o');const bT=hasQ?hlT(s.brand):s.brand,dT=hasQ?hlT(s.n):s.n;const isPtnTbl=isPartner(s);const coLabel=s.co?` <span style="font-size:.55rem;color:#bbb">${s.co}</span>`:'';const dn=s.n;const isHB=CAT[s.n]==='hb';
+    return`<tr style="${cut?'opacity:.5':''}" onmouseenter="showTip(event,raw.find(x=>x.n==='${dn}'))" onmousemove="moveTip(event)" onmouseleave="hideTip()"><td class="c" style="color:#ccc;font-size:.66rem;font-family:'IBM Plex Mono',monospace">${i+1}</td><td class="nm"><span title="${COMPANY[dn]||''}" style="cursor:help">${bT}</span><span class="otag ${oc}">${s.o}</span>${catTag(s)}${coLabel}${cut?'<span class="cut-badge">&lt;1K</span>':''}${isPtnTbl?'<span class="partner-badge">Recommended</span>':''}</td><td style="font-size:.66rem;color:#aaa;font-family:'IBM Plex Mono',monospace">${dT}</td><td class="r" style="color:#3b82f6">${fmt(s.d)}</td><td class="r" style="color:#f97316">${fmt(s.r)}</td><td class="r" style="font-weight:600">${fmt(s.t)}</td><td><div style="display:flex;align-items:center;gap:4px"><div class="mini-bar" style="width:${Math.max(28,s.t/dmax*80)}px"><div class="bd" style="width:${dp}%;height:100%"></div><div class="br" style="width:${rp}%;height:100%"></div></div><span class="ratio-label" style="font-size:.68rem"><span class="d-num">${dp.toFixed(0)}%</span><span class="sep-slash">/</span><span class="r-num">${rp.toFixed(0)}%</span></span></div></td><td class="r" style="font-weight:600;color:${isHB?'#d97706':sc===null?'#ddd':sc>=50?'#16a34a':sc>=35?'#555':'#aaa'}">${isHB?'<span style=\"font-size:.56rem\">Adopt</span>'+Math.round(hb)+'%':sc===null?'—':sc.toFixed(1)}</td><td class="c"><span style="font-size:.72rem;color:#555;font-family:'IBM Plex Mono',monospace">${s.s}</span><span style="font-size:.56rem;color:#ccc"> / ${TS}</span></td></tr>`;}).join('')}
+    </tbody></table></div></div>
+    <div class="ft">
+      <strong>SSP Score:</strong> Coverage (30%) + DIRECT rate (35%) + (Scale × DIRECT rate) (35%). Applied to <strong>SSP category only</strong>. Below 1,000 paths excluded. Does not include margin rates or CPM.<br>
+      
+      <strong>Below threshold:</strong> Teads (660) Geniee SSP (463) MicroAd COMPASS (428) Ogury (295)<br>
+      <strong>Domestic SSP operators:</strong> fluct → CARTA HD (Dentsu Group) | Geniee SSP → Geniee Inc. | MicroAd → MicroAd Inc.<br><strong>Excluded SSPs:</strong> Criteo (own DSP dominant) / Outbrain & Taboola (native ADNW) / YieldOne (Hakuhodo DY Group = competitor) / FreakOut (DSP specialist)
+    </div>`;
+  const inp=document.getElementById('si');if(inp&&searchQ)inp.value=searchQ;
+  renderSC(scData,top3ids,top5ids);
+}
+function renderGC(gt){
+  let h='<div class="gcards">';
+  for(let[gn,gv]of Object.entries(gt)){const gc=grps[gn],dp=(gv.d/gv.t*100).toFixed(1);h+=`<div class="gc" style="border-color:${gc.bc}"><div class="gn"><div class="dot" style="background:${gc.c}"></div>${gn}</div><div class="gd">Total: <b>${fmt(gv.t)}</b> paths (D: <b>${fmt(gv.d)}</b> R:<b>${fmt(gv.r)}</b>) DIRECT rate: <b>${dp}%</b> / Sites: <b>${gv.s}</b></div><div class="gm">${gv.ms.join(' + ')}</div></div>`;}
+  return h+'</div>';
+}
+function renderSC(scData,top3ids,top5ids){
+  const el=document.getElementById('sc');if(!el)return;
+  const W=el.clientWidth,H=el.clientHeight,pa={l:46,r:16,t:14,b:34},pw=W-pa.l-pa.r,ph=H-pa.t-pa.b,sMax=Math.max(...scData.map(x=>x.t),1),hasQ=!!searchQ;
+  const sVals=scData.map(x=>x.s),sMin=Math.min(...sVals)-1,sRange=Math.max(...sVals)-sMin+1;
+  let svg=`<svg width="${W}" height="${H}" style="display:block"><rect x="${pa.l}" y="${pa.t}" width="${pw}" height="${ph}" fill="#fafafa" rx="4"/>`;
+  for(let v of[.25,.5,.75]){svg+=`<line x1="${pa.l+v*pw}" y1="${pa.t}" x2="${pa.l+v*pw}" y2="${pa.t+ph}" stroke="#eee"/><line x1="${pa.l}" y1="${pa.t+(1-v)*ph}" x2="${pa.l+pw}" y2="${pa.t+(1-v)*ph}" stroke="#eee"/>`;}
+  svg+=`<line x1="${pa.l}" y1="${pa.t+ph}" x2="${pa.l+pw}" y2="${pa.t+ph}" stroke="#ddd"/><line x1="${pa.l}" y1="${pa.t}" x2="${pa.l}" y2="${pa.t+ph}" stroke="#ddd"/>`;
+  svg+=`<text x="${pa.l+pw/2}" y="${H-4}" text-anchor="middle" fill="#bbb" font-size="9.5" font-family="IBM Plex Mono">Sites present (of ${TS})</text>`;
+  svg+=`<text x="8" y="${pa.t+ph/2}" text-anchor="middle" fill="#bbb" font-size="9.5" font-family="IBM Plex Mono" transform="rotate(-90,8,${pa.t+ph/2})">DIRECT Rate</text>`;
+  for(let v of[0,.5,1]){svg+=`<text x="${pa.l+v*pw}" y="${pa.t+ph+14}" text-anchor="middle" fill="#ddd" font-size="8" font-family="IBM Plex Mono">${Math.round(sMin+v*sRange)}</text><text x="${pa.l-4}" y="${pa.t+(1-v)*ph+3}" text-anchor="end" fill="#ddd" font-size="8" font-family="IBM Plex Mono">${Math.round(v*100)}%</text>`;}
+  // Partner recommended zone
+  const ptnData=scData.filter(s=>isPartner(s));
+  if(ptnData.length>=2){
+    const pxs=ptnData.map(s=>pa.l+((s.s-sMin)/sRange)*pw);
+    const pys=ptnData.map(s=>pa.t+(1-s.d/s.t)*ph);
+    const zx1=Math.min(...pxs)-28,zx2=Math.max(...pxs)+28,zy1=Math.min(...pys)-28,zy2=Math.max(...pys)+28;
+    svg+=`<rect x="${zx1}" y="${zy1}" width="${zx2-zx1}" height="${zy2-zy1}" rx="10" fill="rgba(16,185,129,.06)" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6,3"/>`;
+    svg+=`<text x="${zx2-4}" y="${zy1+13}" text-anchor="end" fill="#10b981" font-size="8.5" font-weight="600" font-family="IBM Plex Mono">Recommended</text>`;
+  }
+  const labels=[];
+  for(const s of scData){
+    const cx=pa.l+((s.s-sMin)/sRange)*pw,cy=pa.t+(1-s.d/s.t)*ph,r=Math.max(5,Math.min(22,Math.sqrt(s.t/sMax)*22));
+    const cut=isCut(s),isM=mq(s);
+    const isPtnSC=isPartner(s);const isHBsc=CAT[s.n]==='hb';let fill=cut?'#ccc':isPtnSC?'#10b981':isHBsc?'#f59e0b':s.o==='JP'?'#e11d48':'#6366f1';
+    let op=hasQ?(isM?.8:.08):.55,sw=isPtnSC?2.5:1.2,sc=isPtnSC?'#10b981':'white';
+    if(hasQ&&isM){op=.8;sw=2.5;sc='#10b981';}
+    svg+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" opacity="${op}" stroke="${sc}" stroke-width="${sw}"/>`;
+    let lbl=s.brand;if(lbl.length>16)lbl=lbl.substring(0,14)+'…';
+    const showLabel=!hasQ||(hasQ&&isM);
+    if(showLabel){let lx=cx+r+4,anc='start';if(lx+70>pa.l+pw){lx=cx-r-4;anc='end';}
+    labels.push({x:lx,y:cy+3,t:lbl,a:anc,oy:cy,op:hasQ?(isM?1:.06):1,fw:isPtnSC?'700':'400',lc:isPtnSC?'#059669':isHBsc?'#b45309':s.o==='JP'?'#c1121f':'#555'});}
+  }
+  labels.sort((a,b)=>a.oy-b.oy);for(let i=1;i<labels.length;i++){if(Math.abs(labels[i].y-labels[i-1].y)<11)labels[i].y=labels[i-1].y+11;}
+  for(const lb of labels)svg+=`<text x="${lb.x}" y="${lb.y}" text-anchor="${lb.a}" fill="${lb.lc}" font-size="9" font-family="IBM Plex Mono" font-weight="${lb.fw}" opacity="${lb.op}">${lb.t}</text>`;
+  svg+='</svg>';el.innerHTML=svg;
+}
+let sT=null;
+function doSearch(v){searchQ=v;clearTimeout(sT);sT=setTimeout(()=>render(),180);}
+function setF(f){filter=f;searchQ='';render();}
+function tgGrp(){showGrp=!showGrp;render();}
+function setSCF(f){scFilter=f;render();}
+function doSort(k){if(tblSort===k)tblDir*=-1;else{tblSort=k;tblDir=-1;}render();}
+render();window.addEventListener('resize',render);
+</script>
+</body>
+</html>
