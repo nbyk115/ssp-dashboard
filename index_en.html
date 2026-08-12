@@ -49,7 +49,7 @@ td.r{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:.72rem;}td
 .otag{font-size:.54rem;padding:1px 4px;border-radius:3px;margin-left:2px;}.otag-JP{background:#fff1f2;color:#e11d48;}.otag-US{background:#eef2ff;color:#4f46e5;}.otag-FR{background:#f0fdf4;color:#16a34a;}.otag-UK{background:#fefce8;color:#ca8a04;}.otag-CA{background:#faf5ff;color:#9333ea;}.otag-o{background:#f7f7f7;color:#999;}
 .cut-badge{font-size:.54rem;color:#999;background:#f5f5f5;padding:1px 4px;border-radius:3px;margin-left:3px;}
 .ft{font-size:.6rem;color:#ccc;margin-top:24px;line-height:1.8;border-top:1px solid #f0f0f0;padding-top:12px;}
-.partner-badge{display:inline-block;font-size:.52rem;background:linear-gradient(135deg,#10b981,#059669);color:white;padding:1px 5px;border-radius:3px;margin-left:5px;font-weight:600;letter-spacing:.3px;vertical-align:middle;}.partner-row{background:linear-gradient(90deg,rgba(16,185,129,.04),transparent)!important;border-left:3px solid #10b981!important;}
+.partner-badge{display:inline-block;font-size:.52rem;background:linear-gradient(135deg,#10b981,#059669);color:white;padding:1px 5px;border-radius:3px;margin-left:5px;font-weight:600;letter-spacing:.3px;vertical-align:middle;}.watch-badge{display:inline-block;font-size:.52rem;background:linear-gradient(135deg,#f59e0b,#d97706);color:white;padding:1px 5px;border-radius:3px;margin-left:5px;font-weight:600;letter-spacing:.3px;vertical-align:middle;}.partner-row{background:linear-gradient(90deg,rgba(16,185,129,.04),transparent)!important;border-left:3px solid #10b981!important;}
 .cat-tag{display:inline-block;font-size:.48rem;padding:1px 4px;border-radius:2px;margin-left:4px;font-weight:600;letter-spacing:.2px;vertical-align:middle;border:1px solid;}.cat-ssp{color:#6366f1;border-color:#c7d2fe;background:#eef2ff;}.cat-hb{color:#d97706;border-color:#fde68a;background:#fffbeb;}.cat-other{color:#999;border-color:#e5e5e5;background:#fafafa;}
 .tooltip{position:fixed;max-width:340px;background:#1a1a1a;color:#eee;padding:10px 14px;border-radius:8px;font-size:.72rem;line-height:1.6;pointer-events:none;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.25);opacity:0;transition:opacity .15s;}.tooltip.vis{opacity:1;}.tooltip .tt-name{font-weight:700;font-size:.82rem;margin-bottom:3px;color:#fff;}.tooltip .tt-meta{font-size:.64rem;color:#999;margin-bottom:4px;}.tooltip .tt-desc{color:#ccc;}
 .lang-toggle{position:fixed;top:12px;right:16px;z-index:200;display:flex;gap:0;border-radius:6px;overflow:hidden;border:1px solid #ddd;font-size:.7rem;font-family:'IBM Plex Mono',monospace;box-shadow:0 1px 4px rgba(0,0,0,.08);}.lang-toggle a{padding:5px 12px;text-decoration:none;color:#888;background:#fff;transition:all .15s;}.lang-toggle a:hover{background:#f5f5f5;color:#333;}.lang-toggle a.active{background:#1a1a1a;color:#fff;}
@@ -62,16 +62,16 @@ td.r{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:.72rem;}td
   <div class="hd">
     <h1>Japan ads.txt SSP Presence Analysis</h1>
     <p>Analyzing ads.txt entries from major Japanese publishers to visualize supply path structure and scale of key SSPs in the Japan market</p>
-    <div class="meta-row"><span>ads.txt collected from 115 corporate media sites filtered from top 200 by Potential Impressions</span><span>14 SSPs analyzed (excl. Google AdX, APS, Criteo, Outbrain/Taboola, Hakuhodo DY group, FreakOut)</span><span>2026-02-18 crawl / imp 2/10–16</span></div>
+    <div class="meta-row"><span>ads.txt from 93 corporate media sites filtered from top 200 by AdX bid requests (76 sites crawlable)</span><span>13 SSPs analyzed (excl. Google AdX, APS, Criteo, Outbrain/Taboola, Hakuhodo DY group, FreakOut, InMobi)</span><span>2026-08-07 crawl / bid requests 7/29–8/4</span></div>
   </div>
   <div class="insight insight-amber">
     <h3>Data Sources & Exclusions</h3>
     <div style="margin-bottom:8px"><strong>📊 Data Source</strong></div>
     <ul style="margin:0 0 10px 16px;padding:0;list-style:disc;line-height:1.7;font-size:.72rem">
-      <li>Japan sites ranked by Potential Impressions (est. pageviews), <strong>top 200 sites</strong></li>
-      <li>Filtered to <strong>115 corporate-operated editorial media sites</strong> for ads.txt collection</li>
+      <li>Japan sites ranked by Google AdX bid request volume, <strong>top 200 sites</strong></li>
+      <li>Filtered to <strong>93 corporate-operated editorial media sites</strong>; ads.txt collected from the <strong>76 sites</strong> accessible to crawlers (17 sites blocked by bot protection)</li>
       <li>Primarily newspapers, TV networks, publisher web media, and major portals</li>
-      <li>Impression period: Feb 10–16, 2026</li>
+      <li>Bid request period: Jul 29 – Aug 4, 2026 / ads.txt crawl: Aug 7, 2026</li>
     </ul>
     <div style="margin-bottom:8px"><strong>🔍 Site Filtering Criteria</strong></div>
     <ul style="margin:0 0 10px 16px;padding:0;list-style:disc;line-height:1.7;font-size:.72rem">
@@ -82,9 +82,9 @@ td.r{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:.72rem;}td
     </ul>
     <div style="margin-bottom:8px"><strong>🚫 SSP Exclusions (5)</strong></div>
     <ul style="margin:0 0 10px 16px;padding:0;list-style:disc;line-height:1.7;font-size:.72rem">
-      <li><strong>Criteo</strong> — Own DSP (Commerce Grid) demand dominates. Limited benefit buying through Criteo via TTD/DV360<br><span style="color:#999;font-size:.62rem">Ref: 1,554 paths / D-rate 48% / 110 sites</span></li>
-      <li><strong>Outbrain, Taboola</strong> — Native ad networks. Closed recommendation demand structure; not comparable with open auction SSPs<br><span style="color:#999;font-size:.62rem">Ref: Outbrain 890 paths/D-rate 36%, Taboola 335 paths/D-rate 84%</span></li>
-      <li><strong>YieldOne</strong>(impact-ad.jp)— Hakuhodo DY group SSP. Structurally high D-rate due to in-group media connections. Not recommended from Dentsu group perspective<br><span style="color:#999;font-size:.62rem">Ref: 2,143 paths / D-rate 20% / 112 sites</span></li>
+      <li><strong>Criteo</strong> — Own DSP (Commerce Grid) demand dominates. Limited benefit buying through Criteo via TTD/DV360<br><span style="color:#999;font-size:.62rem">Ref: 968 paths / D-rate 49% / 68 sites</span></li>
+      <li><strong>Outbrain, Taboola</strong> — Native ad networks. Closed recommendation demand structure; not comparable with open auction SSPs<br><span style="color:#999;font-size:.62rem">Ref: Outbrain 552 paths/D-rate 33%, Taboola 200 paths/D-rate 83%</span></li>
+      <li><strong>YieldOne</strong>(impact-ad.jp)— Hakuhodo DY group SSP. Structurally high D-rate due to in-group media connections. Not recommended from Dentsu group perspective<br><span style="color:#999;font-size:.62rem">Ref: 1,290 paths / D-rate 20% / 74 sites</span></li>
     </ul>
     <div style="margin-bottom:8px"><strong>📋 About ADNW / HB Wrappers</strong></div>
     <ul style="margin:0 0 10px 16px;padding:0;list-style:disc;line-height:1.7;font-size:.72rem">
@@ -95,27 +95,28 @@ td.r{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:.72rem;}td
     </ul>
     <div style="margin-bottom:8px"><strong>⚠️ Other Exclusions</strong></div>
     <ul style="margin:0 0 6px 16px;padding:0;list-style:disc;line-height:1.7;font-size:.72rem">
-      <li><strong>Google AdX</strong>(google.com)— 10,311 paths / all 115 sites. Incomparable scale; reported separately</li>
+      <li><strong>Google AdX</strong>(google.com)— 6,354 paths / 75 sites. Incomparable scale; reported separately</li>
       <li><strong>Amazon APS</strong>(TAM/UAM)— Excluded due to structural advantage from Amazon DSP demand</li>
-      <li><strong>FreakOut</strong>(fout.jp)— DSP specialist. Minimal SSP function (12 paths)</li>
+      <li><strong>InMobi</strong> — Mobile/app-focused SSP; analyzed separately in upcoming app-inventory report<br><span style="color:#999;font-size:.62rem">Ref: 1,080 paths / D-rate 17% / 71 sites</span></li>
+      <li><strong>FreakOut</strong>(fout.jp)— DSP specialist. Minimal SSP function (6 paths)</li>
     </ul>
     <div style="font-size:.6rem;color:#999;margin-top:4px">* adingo.jp is the ads.txt domain for fluct (CARTA HD / Dentsu Group). Not DAC.</div>
   </div>
   <div class="insight insight-blue" id="spo-box"></div>
   <div class="insight insight-green" id="jp-box"></div>
   <div class="note">
-    <strong>"Path count" means:</strong> The number of authorization lines in each site's ads.txt (ad sales authorization list) that say <strong>"OK to sell ads via this SSP."</strong> Each site has multiple accounts/paths, so totals across 115 sites reach thousands to tens of thousands. More paths = more sites authorizing that SSP through more routes. This is not request count or impression count.
+    <strong>"Path count" means:</strong> The number of authorization lines in each site's ads.txt (ad sales authorization list) that say <strong>"OK to sell ads via this SSP."</strong> Each site has multiple accounts/paths, so totals across 76 sites reach thousands to tens of thousands. More paths = more sites authorizing that SSP through more routes. This is not request count or impression count.
   </div>
   <div id="app"></div>
   <div class="tooltip" id="tip"><div class="tt-name"></div><div class="tt-meta"></div><div class="tt-desc"></div></div>
 </div>
 <script>
-const TH=1000,TS=115,fmt=n=>n.toLocaleString();
-const PARTNERS={"media.net":{reason:"Contextual SSP. Direct buying via HB from TTD/DV360. D-rate 38% is highest among global SSPs. Strong in cookieless environments with proprietary context matching tech."},"adingo.jp":{reason:"Dentsu Group (CARTA HD) SSP. Deployed on 114 premium domestic sites, D-rate 38.6%. Main fluct domain on ads.txt. Strength in Japan-specific operational support, reporting, and deal design."},"ogury.com":{reason:"Mobile-focused SSP differentiated by consent-based advertising. Present on 110 sites. Cookieless ad solution addressing privacy regulation strengthening."}};
+const TH=600,TS=76,fmt=n=>n.toLocaleString();
+const PARTNERS={"media.net":{reason:"Contextual SSP. Direct buying via HB from TTD/DV360. D-rate 36% is highest among global SSPs. Strong in cookieless environments with proprietary context matching tech."},"adingo.jp":{reason:"Dentsu Group (CARTA HD) SSP. Deployed on 75 premium domestic sites, D-rate 37.2%. Main fluct domain on ads.txt. Strength in Japan-specific operational support, reporting, and deal design."},"ogury.com":{reason:"Mobile-focused SSP differentiated by consent-based advertising. Present on 72 sites. Cookieless ad solution addressing privacy regulation strengthening."}};
 // Category: "ssp" = SSP/Exchange
 const CAT={
   "pubmatic.com":"ssp","rubiconproject.com":"ssp","openx.com":"ssp","indexexchange.com":"ssp",
-  "smartadserver.com":"ssp","video.unrulymedia.com":"ssp","inmobi.com":"ssp","media.net":"ssp",
+  "smartadserver.com":"ssp","video.unrulymedia.com":"ssp","media.net":"ssp",
   "gumgum.com":"ssp","teads.tv":"ssp","microad.co.jp":"ssp","ogury.com":"ssp","genieesspv.jp":"ssp",
   "adingo.jp":"ssp",
 };
@@ -126,7 +127,6 @@ const COMPANY={
   "indexexchange.com":"Index Exchange, Inc. (CA, independent)",
   "smartadserver.com":"Equativ(FR, formerly SmartAdServer + Sharethrough merger)",
   "video.unrulymedia.com":"Nexxen(formerly Unruly / Tremor International)",
-  "inmobi.com":"InMobi Pte.(IN, mobile-focused)",
   "media.net":"Media.net(UAE / Yahoo! network)",
   "adingo.jp":"fluct, Inc. (CARTA HD / Dentsu Group)",
   "gumgum.com":"GumGum, Inc.(US, contextual advertising)",
@@ -138,36 +138,34 @@ const COMPANY={
 const CAT_LABEL={"ssp":"SSP","other":"Ref"};
 const CAT_COLOR={"ssp":"#6366f1","other":"#aaa"};
 const sspDesc={
-  "pubmatic.com":"One of the largest global SSPs. Standard connection from TTD/DV360/Amazon DSP. No need to specifically recommend (available by default from any DSP). In Japan, D-rate 7% = almost all paths are reseller, with massive inventory overlap with other SSPs.",
-  "rubiconproject.com":"Formerly Rubicon Project → Magnite. Strength in CTV/OTT. Standard connection from TTD/DV360. In Japan, D-rate 11% = reseller-dominant, overlapping inventory with PubMatic, etc. Differentiated in CTV but limited path advantage on web.",
+  "pubmatic.com":"One of the largest global SSPs. Standard connection from TTD/DV360/Amazon DSP. No need to specifically recommend (available by default from any DSP). In Japan, D-rate 8% = almost all paths are reseller, with massive inventory overlap with other SSPs.",
+  "rubiconproject.com":"Formerly Rubicon Project → Magnite. Strength in CTV/OTT. Standard connection from TTD/DV360. In Japan, D-rate 10% = reseller-dominant, overlapping inventory with PubMatic, etc. Differentiated in CTV but limited path advantage on web.",
   "openx.com":"Established SSP. Standard connection from TTD/DV360. In Japan, D-rate 6% = almost all paths via reseller. Strength in OpenAudience (proprietary ID), but difficult to differentiate from other major SSPs in web path structure.",
-  "indexexchange.com":"Canada-based SSP/Exchange. Transparency-focused path design. Standard connection from TTD/DV360. In Japan, D-rate 9% = reseller-dominant. Known for path transparency, but inventory reach largely overlaps with PubMatic, etc.",
+  "indexexchange.com":"Canada-based SSP/Exchange. Transparency-focused path design. Standard connection from TTD/DV360. In Japan, D-rate 10% = reseller-dominant. Known for path transparency, but inventory reach largely overlaps with PubMatic, etc.",
   "smartadserver.com":"French Equativ (fmr. SmartAdServer). Strong with European publishers. Curation-type SSP.",
   "video.unrulymedia.com":"Formerly Unruly → Nexxen. Started as video SSP, expanded to CTV/OTT.",
-  "inmobi.com":"India-based mobile-focused SSP. Strong in app inventory, also operates in mobile web in Japan.",
-  "media.net":"SSP with Yahoo!/Bing context matching technology. Steadily expanding share as HB player. D-rate 38% is high among global SSPs.",
+  "media.net":"SSP with Yahoo!/Bing context matching technology. Steadily expanding share as HB player. D-rate 36% is high among global SSPs.",
   "gumgum.com":"SSP specializing in contextual advertising. AI-analyzes page content for ad delivery. Rising attention for cookieless compatibility. ⚠ CPM higher than other SSPs (contextual targeting premium). Suited for branding campaigns.",
-  "teads.tv":"French in-read video SSP. Differentiated by in-article video ad format. DIRECT connection to 110/115 sites (D-rate 59%). Low path count but 94% site coverage. ⚠ CPM higher than other SSPs (video format characteristics). Caution if prioritizing cost efficiency.",
-  "adingo.jp":"fluct (CARTA HD / Dentsu Group). One of Japan's largest SSPs. Deployed on 114 sites, D-rate 38.6% on par with Media.net. adingo.jp is fluct's main domain on ads.txt. Differentiated by Japan-specific operational support, deal design, and Japanese reporting.",
+  "teads.tv":"French in-read video SSP. Differentiated by in-article video ad format. Present on 73/76 sites (D-rate 58%). Low path count but 96% site coverage. ⚠ CPM higher than other SSPs (video format characteristics). Caution if prioritizing cost efficiency.",
+  "adingo.jp":"fluct (CARTA HD / Dentsu Group). One of Japan's largest SSPs. Deployed on 75 sites, D-rate 37.2% on par with Media.net. adingo.jp is fluct's main domain on ads.txt. Differentiated by Japan-specific operational support, deal design, and Japanese reporting.",
   "genieesspv.jp":"Geniee. Domestic SSP. Offers proprietary HB solution. Widely adopted by small-to-mid-size media.",
   "microad.co.jp":"MicroAd. Domestic SSP/DMP. Known for UNIVERSE data integration. Small scale but high direct contract rate.",
-  "ogury.com":"French mobile-focused SSP. Advocates consent-based advertising with strong privacy regulation readiness. Present on 110/115 sites. D-rate 37%.",
+  "ogury.com":"French mobile-focused SSP. Advocates consent-based advertising with strong privacy regulation readiness. Present on 72/76 sites. D-rate 32%.",
 };
 const raw=[
-  {n:"pubmatic.com",d:1556,r:18126,t:19682,s:115,brand:"PubMatic",co:"",o:"US"},
-  {n:"rubiconproject.com",d:1275,r:12039,t:13314,s:115,brand:"Magnite",co:"fmr. Rubicon Project",o:"US"},
-  {n:"openx.com",d:624,r:9029,t:9653,s:115,brand:"OpenX",co:"",o:"US"},
-  {n:"indexexchange.com",d:692,r:6481,t:7173,s:115,brand:"Index Exchange",co:"",o:"CA"},
-  {n:"smartadserver.com",d:776,r:5306,t:6082,s:114,brand:"Equativ",co:"fmr. SmartAdServer",o:"FR"},
-  {n:"video.unrulymedia.com",d:670,r:3389,t:4059,s:111,brand:"Nexxen",co:"fmr. Unruly",o:"UK"},
-  {n:"inmobi.com",d:270,r:1441,t:1711,s:105,brand:"InMobi",co:"Mobile SSP",o:"IN"},
-  {n:"media.net",d:589,r:961,t:1550,s:110,brand:"Media.net",co:"Contextual SSP",o:"AE"},
-  {n:"adingo.jp",d:686,r:1092,t:1778,s:114,brand:"fluct",co:"CARTA HD / Dentsu Group",o:"JP"},
-  {n:"gumgum.com",d:221,r:818,t:1039,s:112,brand:"GumGum",co:"Contextual Ad (SSP)",o:"US"},
-  {n:"teads.tv",d:387,r:273,t:660,s:110,brand:"Teads",co:"In-read Video (SSP)",o:"FR"},
-  {n:"genieesspv.jp",d:208,r:255,t:463,s:94,brand:"Geniee SSP",co:"SSP",o:"JP"},
-  {n:"microad.co.jp",d:210,r:218,t:428,s:107,brand:"MicroAd COMPASS",co:"SSP/DMP",o:"JP"},
-  {n:"ogury.com",d:109,r:186,t:295,s:110,brand:"Ogury",co:"Mobile-focused (SSP)",o:"FR"},
+  {n:"pubmatic.com",d:955,r:11212,t:12167,s:75,brand:"PubMatic",co:"",o:"US"},
+  {n:"rubiconproject.com",d:768,r:7450,t:8218,s:75,brand:"Magnite",co:"fmr. Rubicon Project",o:"US"},
+  {n:"openx.com",d:363,r:5508,t:5871,s:75,brand:"OpenX",co:"",o:"US"},
+  {n:"indexexchange.com",d:427,r:4021,t:4448,s:75,brand:"Index Exchange",co:"",o:"CA"},
+  {n:"smartadserver.com",d:497,r:3400,t:3897,s:75,brand:"Equativ",co:"fmr. SmartAdServer",o:"FR"},
+  {n:"video.unrulymedia.com",d:412,r:2171,t:2583,s:74,brand:"Nexxen",co:"fmr. Unruly",o:"UK"},
+  {n:"media.net",d:380,r:681,t:1061,s:73,brand:"Media.net",co:"Contextual SSP",o:"AE"},
+  {n:"adingo.jp",d:400,r:676,t:1076,s:75,brand:"fluct",co:"CARTA HD / Dentsu Group",o:"JP"},
+  {n:"gumgum.com",d:142,r:500,t:642,s:75,brand:"GumGum",co:"Contextual Ad (SSP)",o:"US"},
+  {n:"teads.tv",d:232,r:171,t:403,s:73,brand:"Teads",co:"In-read Video (SSP)",o:"FR"},
+  {n:"genieesspv.jp",d:141,r:171,t:312,s:65,brand:"Geniee SSP",co:"SSP",o:"JP"},
+  {n:"microad.co.jp",d:133,r:134,t:267,s:71,brand:"MicroAd COMPASS",co:"SSP/DMP",o:"JP"},
+  {n:"ogury.com",d:64,r:135,t:199,s:72,brand:"Ogury",co:"Mobile-focused (SSP)",o:"FR"},
 ];
 const grps={};
 const maxT=Math.max(...raw.filter(x=>x.t>=TH).map(x=>x.t));
@@ -177,7 +175,7 @@ function showTip(e,s){
   const dp=(s.d/s.t*100).toFixed(0),sc=spoScore(s);
   tipEl.querySelector('.tt-name').textContent=s.brand+(s.co?' — '+s.co:'');
   tipEl.querySelector('.tt-meta').textContent=`${fmt(s.t)}paths / D${dp}% / ${s.s}sites`+(sc!==null?' / Score '+sc.toFixed(1):'');
-  const pInfo=PARTNERS[s.n];tipEl.querySelector('.tt-desc').textContent=pInfo?'[Recommended Partner] '+pInfo.reason+'\n\n'+desc:desc;
+  const pInfo=PARTNERS[s.n],wInfo=WATCH[s.n];tipEl.querySelector('.tt-desc').textContent=pInfo?'[Recommended Partner] '+pInfo.reason+'\n\n'+desc:(wInfo?'[Watch] '+wInfo.reason+'\n\n'+desc:desc);
   tipEl.classList.add('vis');
   const x=Math.min(e.clientX+12,window.innerWidth-360),y=e.clientY+16;
   tipEl.style.left=x+'px';tipEl.style.top=y+'px';
@@ -201,6 +199,7 @@ function hbScore(s){
 }
 function isCut(s){return CAT[s.n]==='ssp' && s.t<TH;}
 function isPartner(s){return !!PARTNERS[s.n];}
+const WATCH={"gumgum.com":{reason:"D-rate 22%, 99% coverage (75/76 sites), #3 in score. Contextual/attention differentiation; reaching Tier 1 threshold (30% D-rate) is within sight if DIRECT connections expand. Worth watching."}};function isWatch(s){return !!WATCH[s.n];}
 function catTag(s){const c=CAT[s.n]||'other';return '<span class="cat-tag cat-'+c+'">'+CAT_LABEL[c]+'</span>';}
 
 function renderInsightBoxes(){
@@ -208,12 +207,12 @@ function renderInsightBoxes(){
   const hbOnly=raw.filter(x=>CAT[x.n]==='hb').map(s=>({...s,hbs:hbScore(s)})).sort((a,b)=>b.hbs-a.hbs);
   const jp=sspOnly.filter(x=>x.o==='JP'),top5=sspOnly.slice(0,5),mx=top5[0]?top5[0].spo:1;
   const cutList=raw.filter(x=>CAT[x.n]==='ssp'&&x.t<TH);
-  const row=(i,s,color)=>`<div class="score-row"><span class="rank-num">${i+1}</span><span class="score-name">${s.o==='JP'?'<span class="jp-flag">🇯🇵</span> ':''}<span title="${COMPANY[s.n]||''}" style="cursor:help">${s.brand}</span>${PARTNERS[s.n]?' <span class="partner-badge">Recommended</span>':''}</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:${Math.round(s.spo/mx*100)}%;background:${color}"></div></div><span class="score-val">${s.spo.toFixed(1)}</span><span class="score-detail">D${(s.d/s.t*100).toFixed(0)}% Cov${(s.s/TS*100).toFixed(0)}% ${fmt(s.t)}paths</span></div>`;
-  const hbRow=(i,s)=>`<div class="score-row"><span class="rank-num">${i+1}</span><span class="score-name">${s.o==='JP'?'<span class="jp-flag">🇯🇵</span> ':''}<span title="${COMPANY[s.n]||''}" style="cursor:help">${s.brand}</span>${PARTNERS[s.n]?' <span class="partner-badge">Recommended</span>':''}</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:${Math.round(s.hbs)}%;background:#f59e0b"></div></div><span class="score-val">Adopt${Math.round(s.hbs)}%</span><span class="score-detail">${fmt(s.t)}paths D${(s.d/s.t*100).toFixed(0)}%</span></div>`;
+  const row=(i,s,color)=>`<div class="score-row"><span class="rank-num">${i+1}</span><span class="score-name">${s.o==='JP'?'<span class="jp-flag">🇯🇵</span> ':''}<span title="${COMPANY[s.n]||''}" style="cursor:help">${s.brand}</span>${PARTNERS[s.n]?' <span class="partner-badge">Recommended</span>':''}${WATCH&&WATCH[s.n]?' <span class=\"watch-badge\">Watch</span>':''}</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:${Math.round(s.spo/mx*100)}%;background:${color}"></div></div><span class="score-val">${s.spo.toFixed(1)}</span><span class="score-detail">D${(s.d/s.t*100).toFixed(0)}% Cov${(s.s/TS*100).toFixed(0)}% ${fmt(s.t)}paths</span></div>`;
+  const hbRow=(i,s)=>`<div class="score-row"><span class="rank-num">${i+1}</span><span class="score-name">${s.o==='JP'?'<span class="jp-flag">🇯🇵</span> ':''}<span title="${COMPANY[s.n]||''}" style="cursor:help">${s.brand}</span>${PARTNERS[s.n]?' <span class="partner-badge">Recommended</span>':''}${WATCH&&WATCH[s.n]?' <span class=\"watch-badge\">Watch</span>':''}</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:${Math.round(s.hbs)}%;background:#f59e0b"></div></div><span class="score-val">Adopt${Math.round(s.hbs)}%</span><span class="score-detail">${fmt(s.t)}paths D${(s.d/s.t*100).toFixed(0)}%</span></div>`;
   document.getElementById('spo-box').innerHTML=`
     <h3>🏆 SSP Evaluation Score TOP 5</h3>
     ${top5.map((s,i)=>row(i,s,'#6366f1')).join('')}
-    <div class="rule">SSP = Player directly connected to publishers, supplying impressions to DSPs. Evaluated by SSP Score (Coverage 30% + DIRECT rate 35% + Scale×D-rate 35%). Quantifies the 'directness' and 'reach' of ad delivery paths.<br><br><strong>Why aren't the top SSPs (PubMatic, etc.) 'Recommended'?</strong> PubMatic, Magnite, OpenX, and Index Exchange are <strong>standard connections on TTD/DV360/Amazon DSP</strong>. They're used by default without need for recommendation. In Japan, D-rate is 6–11% = almost entirely reseller paths, with massive inventory overlap across SSPs making path differentiation difficult.<br>Recommended Partners (Media.net / fluct / Ogury) are SSPs with unique value not available through standard connections.<br><br><strong>⚠ About Teads:</strong> 660 paths, below threshold (under 1,000 paths), but D-rate 59% and site coverage 96% (110/115 sites). Low path count due to in-read video format specialization. Direct contract ratio is among the highest of all SSPs. However, CPM is higher than other SSPs (video premium). Caution if prioritizing cost efficiency.</div>`;
+    <div class="rule">SSP = Player directly connected to publishers, supplying impressions to DSPs. Evaluated by SSP Score (Coverage 30% + DIRECT rate 35% + Scale×D-rate 35%). Quantifies the 'directness' and 'reach' of ad delivery paths.<br><br><strong>Selection criteria for 'Recommended' (DSM partner basis):</strong> This dashboard visualizes supply structure as the evidence base for DSM (priority ranking of designated SSPs). Recommended = <strong>D-rate 30%+ on premium inventory, or incremental DIRECT connections not covered by existing partners</strong>.<br><strong>Why the major SSPs (PubMatic, Magnite, OpenX, Index Exchange) are not Recommended:</strong> D-rate 6–10% = over 90% of paths are resold, failing the threshold. Their inventories also overlap almost entirely, so prioritizing multiple majors invites bid duplication on the same impressions. Note these four are standard DSP connections and remain buyable without priority designation.<br>Recommended Partners (Media.net / fluct / Ogury) maintained 30%+ D-rate across both measurements (Feb & Aug), with their combined DIRECT connections covering 74 of 76 sites.<br><br><strong>⚠ About Teads:</strong> 403 paths, below threshold (under 600 paths), but D-rate 58% and site coverage 96% (73/76 sites). Low path count due to in-read video format specialization. Direct contract ratio is among the highest of all SSPs. However, CPM is higher than other SSPs (video premium). Caution if prioritizing cost efficiency.</div>`;
   document.getElementById('jp-box').innerHTML='';
 
 }
@@ -227,7 +226,7 @@ function render(){
   let data=searchQ?raw.filter(mq):filter==='all'?raw:filter==='jp'?raw.filter(x=>x.o==='JP'):raw.filter(x=>x.o!=='JP');
   const sorted=[...data].sort((a,b)=>{if(tblSort==='spo'){const sa=spoScore(a)||hbScore(a)||0,sb=spoScore(b)||hbScore(b)||0;return tblDir*(sb-sa);}if(tblSort==='dpct')return tblDir*((b.d/b.t)-(a.d/a.t));return tblDir*((b[tblSort]||0)-(a[tblSort]||0));});
   const dmax=Math.max(...sorted.map(x=>x.t),1),hasQ=!!searchQ;
-  let scData=raw.filter(x=>(!isCut(x)||isPartner(x))&&x.n!=='inmobi.com');if(scFilter==='jp')scData=scData.filter(x=>x.o==='JP');else if(scFilter==='gl')scData=scData.filter(x=>x.o!=='JP');
+  let scData=raw.filter(x=>!isCut(x)||isPartner(x));if(scFilter==='jp')scData=scData.filter(x=>x.o==='JP');else if(scFilter==='gl')scData=scData.filter(x=>x.o!=='JP');
   const qualified=scData.filter(x=>CAT[x.n]==='ssp'&&x.t>=TH),scByScore=[...qualified].sort((a,b)=>spoScore(b)-spoScore(a));
   const top5ids=new Set(),top3ids=new Set();
   let gt={};if(showGrp){for(let[gn,gv]of Object.entries(grps)){let ms=raw.filter(x=>gv.m.includes(x.n));if(ms.length>=2)gt[gn]={d:ms.reduce((s,m)=>s+m.d,0),r:ms.reduce((s,m)=>s+m.r,0),t:ms.reduce((s,m)=>s+m.t,0),s:Math.max(...ms.map(m=>m.s)),cnt:ms.length,ms:ms.map(m=>`${m.brand} (${m.n})`)};}}
@@ -250,7 +249,7 @@ function render(){
     </div>
     <div class="sc-section">
       <h2>Positioning Map</h2>
-      <div class="desc">X-axis: Sites present (of 115). Y-axis: DIRECT rate. Circle size: Path count. Green = Recommended Partner. Dashed box = Recommended zone. Below-threshold SSPs hidden (except Partners).</div>
+      <div class="desc">X-axis: Sites present (of 76). Y-axis: DIRECT rate. Circle size: Path count. Green = Recommended Partner. Dashed box = Recommended zone. Below-threshold SSPs hidden (except Partners).</div>
       <div class="sc-ctrl">
         <button class="pill ${scFilter==='all'?'on':''}" onclick="setSCF('all')">All SSPs</button>
         <button class="pill ${scFilter==='jp'?'on':''}" onclick="setSCF('jp')">Domestic Only</button>
@@ -266,9 +265,9 @@ function render(){
     return`<tr style="${cut?'opacity:.5':''}" onmouseenter="showTip(event,raw.find(x=>x.n==='${dn}'))" onmousemove="moveTip(event)" onmouseleave="hideTip()"><td class="c" style="color:#ccc;font-size:.66rem;font-family:'IBM Plex Mono',monospace">${i+1}</td><td class="nm"><span title="${COMPANY[dn]||''}" style="cursor:help">${bT}</span><span class="otag ${oc}">${s.o}</span>${catTag(s)}${coLabel}${cut?'<span class="cut-badge">&lt;1K</span>':''}${isPtnTbl?'<span class="partner-badge">Recommended</span>':''}</td><td style="font-size:.66rem;color:#aaa;font-family:'IBM Plex Mono',monospace">${dT}</td><td class="r" style="color:#3b82f6">${fmt(s.d)}</td><td class="r" style="color:#f97316">${fmt(s.r)}</td><td class="r" style="font-weight:600">${fmt(s.t)}</td><td><div style="display:flex;align-items:center;gap:4px"><div class="mini-bar" style="width:${Math.max(28,s.t/dmax*80)}px"><div class="bd" style="width:${dp}%;height:100%"></div><div class="br" style="width:${rp}%;height:100%"></div></div><span class="ratio-label" style="font-size:.68rem"><span class="d-num">${dp.toFixed(0)}%</span><span class="sep-slash">/</span><span class="r-num">${rp.toFixed(0)}%</span></span></div></td><td class="r" style="font-weight:600;color:${isHB?'#d97706':sc===null?'#ddd':sc>=50?'#16a34a':sc>=35?'#555':'#aaa'}">${isHB?'<span style=\"font-size:.56rem\">Adopt</span>'+Math.round(hb)+'%':sc===null?'—':sc.toFixed(1)}</td><td class="c"><span style="font-size:.72rem;color:#555;font-family:'IBM Plex Mono',monospace">${s.s}</span><span style="font-size:.56rem;color:#ccc"> / ${TS}</span></td></tr>`;}).join('')}
     </tbody></table></div></div>
     <div class="ft">
-      <strong>SSP Score:</strong> Coverage (30%) + DIRECT rate (35%) + (Scale × DIRECT rate) (35%). Applied to <strong>SSP category only</strong>. Below 1,000 paths excluded. Does not include margin rates or CPM.<br>
+      <strong>SSP Score:</strong> Coverage (30%) + DIRECT rate (35%) + (Scale × DIRECT rate) (35%). Applied to <strong>SSP category only</strong>. Below 600 paths excluded (proportional to prior 1,000-path threshold). Does not include margin rates or CPM.<br>
       
-      <strong>Below threshold:</strong> Teads (660) Geniee SSP (463) MicroAd COMPASS (428) Ogury (295)<br>
+      <strong>Below threshold:</strong> Teads (403) Geniee SSP (312) MicroAd COMPASS (267) Ogury (199)<br>
       <strong>Domestic SSP operators:</strong> fluct → CARTA HD (Dentsu Group) | Geniee SSP → Geniee Inc. | MicroAd → MicroAd Inc.<br><strong>Excluded SSPs:</strong> Criteo (own DSP dominant) / Outbrain & Taboola (native ADNW) / YieldOne (Hakuhodo DY Group = competitor) / FreakOut (DSP specialist)
     </div>`;
   const inp=document.getElementById('si');if(inp&&searchQ)inp.value=searchQ;
